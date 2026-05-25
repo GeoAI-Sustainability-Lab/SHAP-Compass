@@ -10,10 +10,10 @@ implementing the framework described in:
 SHAP-Compass projects every `(feature value, SHAP attribution)` pair onto
 the unit circle, then groups samples whose attribution directionalities
 are similar using a SOM + Ward two-stage clustering. The resulting
-**attribution regimes** (機制分區) reveal how a single GeoAI model can
-encode regionally distinct mechanisms, and the **Directional Consistency
-Index (DCI, 方向一致性指數)** quantifies which features behave
-universally versus context-dependently across regimes.
+**attribution regimes** reveal how a single GeoAI model can encode
+regionally distinct mechanisms, and the **Directional Consistency
+Index (DCI)** quantifies which features behave universally versus
+context-dependently across regimes.
 
 ![SHAP-Compass pipeline](docs/concepts/concept_pipeline.png)
 
@@ -44,15 +44,15 @@ driven by mechanism direction, not by a handful of extreme samples.
 
 ## Key terminology
 
-| English | Chinese | Symbol / role |
-|---|---|---|
-| attribution regime | 機制分區 | label assigned by SHAP-Compass to each sample |
-| attribution directionality | 歸因方向性 | the property quantified by θ |
-| SHAP-Compass matrix | — | N × 2J input to the SOM |
-| directional fingerprint | — | 2J-dim vector per SOM neuron |
-| Directional Consistency Index (DCI) | 方向一致性指數 | per-feature cross-regime concentration in [0, 1] |
-| axial doubling | 倍角法 | 2θ transform, so θ and θ + π are the same axis |
-| bilayer feature heatmap | 雙層特性熱力圖 | replaces the rose / polar diagrams used in earlier versions |
+| Term | Symbol / role |
+|---|---|
+| attribution regime | label assigned by SHAP-Compass to each sample |
+| attribution directionality | the property quantified by θ |
+| SHAP-Compass matrix | N × 2J input to the SOM |
+| directional fingerprint | 2J-dim vector per SOM neuron |
+| Directional Consistency Index (DCI) | per-feature cross-regime concentration in [0, 1] |
+| axial doubling | 2θ transform, so θ and θ + π are the same axis |
+| bilayer feature heatmap | replaces the rose / polar diagrams used in earlier versions |
 
 ## Key features
 
