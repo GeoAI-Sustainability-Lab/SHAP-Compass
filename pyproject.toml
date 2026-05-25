@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shap-compass"
+version = "0.2.0"
+description = "SHAP-Compass: a regime-level interpretability framework for spatially heterogeneous attribution mechanisms in GeoAI."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    {name = "SHAP-Compass Contributors"},
+]
+keywords = [
+    "explainable-ai", "shap", "clustering", "self-organizing-map",
+    "directional-statistics", "environmental-science", "geoai",
+    "attribution-regime",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.21",
+    "pandas>=1.3",
+    "scipy>=1.7",
+    "scikit-learn>=1.0",
+    "minisom>=2.3",
+    "matplotlib>=3.5",
+]
+
+[project.optional-dependencies]
+shap = ["shap>=0.41"]
+spatial = ["geopandas>=0.10", "rasterio>=1.3", "pyproj>=3.4"]
+dev = ["pytest>=7.0", "pytest-cov", "ruff"]
+docs = ["sphinx", "sphinx-rtd-theme"]
+
+[project.urls]
+Homepage = "https://github.com/YOUR_USERNAME/shap-compass"
+Documentation = "https://github.com/YOUR_USERNAME/shap-compass#readme"
+Repository = "https://github.com/YOUR_USERNAME/shap-compass"
+Issues = "https://github.com/YOUR_USERNAME/shap-compass/issues"
+
+[tool.setuptools.packages.find]
+include = ["shap_compass*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
