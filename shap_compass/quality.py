@@ -1,4 +1,4 @@
-"""Quality metrics M01-M21 and Borda voting for SHAP-Compass.
+"""Quality metrics M01-M21 for SHAP-Compass.
 
 These 21 indicators mirror Appendix S2 of the ISPRS paper. They serve as a
 self-check on a SHAP-Compass configuration (SOM size, k, linkage, ...).
@@ -14,14 +14,14 @@ Within the valid pool, three "core" metrics are the primary selectors:
     M18 — target separability eta^2 in the low-target band
     M20 — Moran's I spatial continuity (only when coordinates are provided)
 
-All other metrics are diagnostic and can be summarised with the optional
-Borda voting helper.
+All other metrics are reported as independent diagnostics; callers should
+inspect each metric on its own rather than collapsing them into a single
+aggregate score.
 """
 
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
 from scipy import stats
 from scipy.stats import linregress
 from scipy.cluster.hierarchy import linkage as sp_linkage, cophenet
@@ -64,10 +64,6 @@ METRIC_NAMES = {
     "M20": "Target adjacent min-gap / IQR",
     "M21": "Inter-regime mechanism diversity",
 }
-
-# Ascending = True means lower is better when ranking trials.
-ASCENDING = {col: False for col in METRIC_COLS}
-ASCENDING["M10"] = True  # Davies-Bouldin: lower is better.
 
 CORE_METRICS = ("M13", "M18", "M20")
 """Three primary selectors applied within the valid pool (Section 2.4)."""
@@ -481,82 +477,3 @@ def compute_all_metrics(
         metrics["M21"] = compute_M21(results.neuron_cossin, results.neuron_labels, n_clusters)
 
     return metrics
-
-
-# ---------------------------------------------------------------------------
-# Borda voting
-# ---------------------------------------------------------------------------
-
-def borda_rank(
-    trials_df: pd.DataFrame,
-    min_neuron_util: float = 1.0,
-    min_cluster_frac: float = 0.03,
-    m19_weight: int = 3,
-) -> pd.DataFrame:
-    """Borda voting across SHAP-Compass configurations.
-
-    Two hard pre-filters (Section 2.4):
-        1. ``M05 < min_neuron_util``           -> dead-neuron disqualification.
-        2. ``M19_min_frac < min_cluster_frac`` -> small-regime disqualification.
-
-    Disqualified trials receive 0 Borda points. Within the valid pool each
-    metric is ranked and scored as ``weight * (n_pool - rank + 1)``. M19
-    receives ``m19_weight x`` weighting to emphasise interpretability.
-    """
-    df = trials_df.copy()
-    n_total = len(df)
-
-    fail_dead = (
-        (df["M05"] < min_neuron_util)
-        if "M05" in df.columns
-        else pd.Series(False, index=df.index)
-    )
-    fail_small = (
-        (df["M19_min_frac"] < min_cluster_frac)
-        if "M19_min_frac" in df.columns
-        else pd.Series(False, index=df.index)
-    )
-    disqualified = fail_dead | fail_small
-
-    df["disqualified"] = disqualified
-    df["dq_dead_neuron"] = fail_dead
-    df["dq_small_cluster"] = fail_small
-
-    pool_mask = ~disqualified
-    pool_idx = df.index[pool_mask]
-    n_pool = int(pool_mask.sum())
-    df["in_borda_pool"] = pool_mask
-
-    if n_pool == 0:
-        df["total_borda"] = 0
-        df["total_rank"] = n_total
-        df["max_borda"] = 0
-        df["borda_pct"] = 0.0
-        return df.sort_values("total_borda", ascending=False).reset_index(drop=True)
-
-    available = [c for c in METRIC_COLS if c in df.columns]
-
-    for col in available:
-        weight = m19_weight if col == "M19" else 1
-        pool_vals = df.loc[pool_idx, col]
-        pool_ranks = pool_vals.rank(
-            ascending=ASCENDING.get(col, False), method="average"
-        )
-        df.loc[pool_idx, f"borda_{col}"] = weight * (n_pool - pool_ranks + 1)
-        df.loc[~pool_mask, f"borda_{col}"] = 0
-
-    borda_cols = [f"borda_{c}" for c in available if f"borda_{c}" in df.columns]
-    df["total_borda"] = df[borda_cols].sum(axis=1)
-    total_weight = (len(available) - 1) * 1 + 1 * m19_weight
-    max_borda = total_weight * n_pool
-    df["max_borda"] = max_borda
-    df["borda_pct"] = df["total_borda"] / max_borda * 100
-
-    df.loc[pool_idx, "total_rank"] = (
-        df.loc[pool_idx, "total_borda"]
-        .rank(ascending=False, method="min")
-        .astype(int)
-    )
-    df.loc[~pool_mask, "total_rank"] = n_total
-
-    return df.sort_values("total_borda", ascending=False).reset_index(drop=True)

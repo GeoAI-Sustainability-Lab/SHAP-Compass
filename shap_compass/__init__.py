@@ -31,23 +31,28 @@ from .dci import (
     dci_band,
 )
 from .utils import circular_R, circular_R_axial, circular_mean
-from .consensus import (
-    check_consensus,
-    check_consensus_from_results,
-    ConsensusReport,
-)
-from .stage2 import (
-    intensity_stratify,
-    intensity_stratify_from_results,
-    Stage2Result,
-)
+# --- Advanced features (kept in source but not part of the public API)
+# These are not yet validated in the accompanying paper. The modules
+# remain in the package so they can be re-enabled later, but they are
+# intentionally not re-exported here. To use them anyway, import from
+# the sub-module directly, e.g. `from shap_compass.consensus import ...`.
+#
+# from .consensus import (
+#     check_consensus,
+#     check_consensus_from_results,
+#     ConsensusReport,
+# )
+# from .stage2 import (
+#     intensity_stratify,
+#     intensity_stratify_from_results,
+#     Stage2Result,
+# )
+# from .multi import run_multi_target, MultiTargetResults
 from .quality import (
     compute_all_metrics,
-    borda_rank,
     METRIC_NAMES,
     METRIC_COLS,
 )
-from .multi import run_multi_target, MultiTargetResults
 
 __all__ = [
     "__version__",
@@ -69,20 +74,17 @@ __all__ = [
     "circular_R",
     "circular_R_axial",
     "circular_mean",
-    # Consensus
-    "check_consensus",
-    "check_consensus_from_results",
-    "ConsensusReport",
-    # Stage 2
-    "intensity_stratify",
-    "intensity_stratify_from_results",
-    "Stage2Result",
+    # --- Advanced features (currently disabled, see note above)
+    # "check_consensus",
+    # "check_consensus_from_results",
+    # "ConsensusReport",
+    # "intensity_stratify",
+    # "intensity_stratify_from_results",
+    # "Stage2Result",
+    # "run_multi_target",
+    # "MultiTargetResults",
     # Quality metrics
     "compute_all_metrics",
-    "borda_rank",
     "METRIC_NAMES",
     "METRIC_COLS",
-    # Multi-target
-    "run_multi_target",
-    "MultiTargetResults",
 ]

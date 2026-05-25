@@ -1,7 +1,6 @@
 """Tests for ``shap_compass.quality``."""
 
 import numpy as np
-import pandas as pd
 import pytest
 
 from shap_compass.quality import (
@@ -9,7 +8,7 @@ from shap_compass.quality import (
     compute_M12, compute_M15, compute_M16,
     compute_M19, compute_M19_min_frac,
     compute_M20, compute_M21,
-    borda_rank, METRIC_COLS,
+    METRIC_COLS,
 )
 
 
@@ -96,19 +95,3 @@ def test_M21_diverse_clusters():
     assert val > 0.1
 
 
-def test_borda_rank_disqualifies_dead_neuron():
-    trials = pd.DataFrame({
-        "trial": ["A", "B", "C"],
-        "M05": [1.0, 1.0, 0.8],
-        "M08": [0.5, 0.3, 0.6],
-        "M09": [100, 80, 120],
-        "M10": [0.8, 1.2, 0.5],
-        "M12": [0.4, 0.6, 0.5],
-        "M19": [0.8, 0.9, 0.7],
-        "M19_min_frac": [0.15, 0.20, 0.10],
-    })
-    result = borda_rank(trials)
-    assert bool(result.loc[result["trial"] == "C", "disqualified"].values[0]) is True
-    assert bool(result.loc[result["trial"] == "A", "in_borda_pool"].values[0]) is True
-    pool = result[result["in_borda_pool"]]
-    assert (pool["total_borda"] > 0).all()

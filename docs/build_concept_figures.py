@@ -106,7 +106,7 @@ def make_pipeline_figure() -> None:
                          "Bilayer feature heatmap\n(Z^F upper, Z^S lower)",
                          face="#FFF3E0", edge="#E65100", fontsize=10)
     qm_box = draw_box(ax, (9.7, 0.7), 2.0, 0.8,
-                       "Quality M01-M21\n(Borda voting)",
+                       "Quality M01-M21\n(per-metric output)",
                        face="#FFF3E0", edge="#E65100", fontsize=10)
 
     # Arrows

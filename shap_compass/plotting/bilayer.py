@@ -10,6 +10,7 @@ dozens of features.
 
 from __future__ import annotations
 
+import textwrap
 from collections.abc import Mapping
 from typing import Iterable, Optional, Sequence
 
@@ -184,23 +185,39 @@ def plot_bilayer_heatmap(
     ax.set_xticklabels(labels_x, rotation=90, fontsize=9, ha="center")
     ax.tick_params(axis="x", length=0, pad=2)
 
-    # Dimension labels and separators
+    # Dimension labels and separators. Long names in narrow column blocks
+    # are wrapped onto multiple lines so they do not bleed into the
+    # neighbouring dimension's label.
     cum = 0
+    chars_per_col = 4  # heuristic width budget at fontsize 11 bold
+    max_label_lines = 1
     for dim, sz in dim_sizes:
         left = cum - 0.5
         if cum > 0:
             ax.vlines(left, ymin=-0.5, ymax=n_groups - 0.5, color="black", lw=1.0)
+        wrap_width = max(int(round(sz * chars_per_col)), 4)
+        wrapped = textwrap.fill(dim, width=wrap_width, break_long_words=False)
+        max_label_lines = max(max_label_lines, wrapped.count("\n") + 1)
+        # va="bottom" anchors the bottom of the text just above the
+        # heatmap, so wrapped multi-line labels grow upward into the
+        # margin instead of downward into the heatmap.
         ax.text(
-            cum + sz / 2 - 0.5, -1.0, dim,
-            ha="center", va="top",
+            cum + sz / 2 - 0.5, -0.65, wrapped,
+            ha="center", va="bottom",
             fontsize=11, fontweight="bold",
+            linespacing=0.95,
         )
         cum += sz
 
     ax.hlines(-0.5, xmin=-0.5, xmax=N - 0.5, color="black", lw=0.8)
 
+    # Reserve enough vertical headroom for the tallest wrapped label.
+    if dim_sizes:
+        ylim_top = -1.0 - 0.7 * max_label_lines
+    else:
+        ylim_top = -1.0
     ax.set_xlim(-0.5, N - 0.5)
-    ax.set_ylim(n_groups - 0.5, -2.5 if dim_sizes else -1.0)
+    ax.set_ylim(n_groups - 0.5, ylim_top)
 
     for spine in ax.spines.values():
         spine.set_visible(False)

@@ -24,8 +24,9 @@ import pandas as pd
 from shap_compass import (
     SHAPCompass,
     compute_all_metrics,
-    intensity_stratify_from_results,
 )
+# --- Advanced feature (currently disabled in the public API):
+# from shap_compass.stage2 import intensity_stratify_from_results
 from shap_compass.plotting import (
     plot_dci_ranking,
     plot_bilayer_heatmap,
@@ -253,7 +254,7 @@ print(f"[Taiwan synthetic] figures saved to {IMG}")
 
 
 # ---------------------------------------------------------------------------
-# 5. Quality metrics + Stage 2 + summary CSVs
+# 5. Quality metrics + summary CSVs
 # ---------------------------------------------------------------------------
 metrics = compute_all_metrics(
     results, target=target,
@@ -262,11 +263,12 @@ metrics = compute_all_metrics(
 print(f"[Taiwan synthetic] {len(metrics)} quality metrics computed")
 print(f"  eta^2 = {results.eta_sq:.3f}")
 
-s2 = intensity_stratify_from_results(
-    results, target=target,
-    features_raw=features, feature_names=FEATURE_NAMES,
-)
-print(f"[Taiwan synthetic] Stage 2: {len(s2.split_groups)} split / {len(s2.retained_groups)} retained")
+# --- Advanced feature (currently disabled):
+# s2 = intensity_stratify_from_results(
+#     results, target=target,
+#     features_raw=features, feature_names=FEATURE_NAMES,
+# )
+# print(f"[Taiwan synthetic] Stage 2: {len(s2.split_groups)} split / {len(s2.retained_groups)} retained")
 
 results.dci.to_csv(OUT / "dci_ranking.csv", index=False)
 pd.DataFrame([{"metric": k, "value": v} for k, v in sorted(metrics.items())]).to_csv(
@@ -277,6 +279,7 @@ pd.DataFrame({
     "recovered_regime": results.labels,
     "target": target,
 }).to_csv(OUT / "regime_assignments.csv", index=False)
-s2.summary.to_csv(OUT / "stage2_verdict.csv", index=False)
+# --- Advanced-feature CSV (disabled):
+# s2.summary.to_csv(OUT / "stage2_verdict.csv", index=False)
 
 print(f"[Taiwan synthetic] outputs saved to {OUT}")

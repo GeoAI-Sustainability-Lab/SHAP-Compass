@@ -139,73 +139,76 @@ class SHAPCompass:
     # ----------------------------------------------------------------
     # Constructors
     # ----------------------------------------------------------------
-    @classmethod
-    def from_model(
-        cls,
-        model,
-        X: np.ndarray,
-        feature_names: list | None = None,
-        target: np.ndarray | None = None,
-        explainer_type: str = "auto",
-    ) -> "SHAPCompass":
-        """Build a ``SHAPCompass`` by computing SHAP values automatically.
-
-        Tries :class:`shap.TreeExplainer` first, then falls back to
-        :class:`shap.LinearExplainer` / :class:`shap.KernelExplainer`.
-        """
-        try:
-            import shap
-        except ImportError as err:  # pragma: no cover - import guard
-            raise ImportError(
-                "shap is required for SHAPCompass.from_model(). "
-                "Install it with: pip install shap"
-            ) from err
-
-        if isinstance(X, pd.DataFrame):
-            if feature_names is None:
-                feature_names = list(X.columns)
-            X_array = X.values.astype(np.float64)
-        else:
-            X_array = np.asarray(X, dtype=np.float64)
-
-        if explainer_type == "auto":
-            try:
-                explainer = shap.TreeExplainer(model)
-                explainer_used = "TreeExplainer"
-            except Exception:
-                try:
-                    explainer = shap.LinearExplainer(model, X_array)
-                    explainer_used = "LinearExplainer"
-                except Exception:
-                    explainer = shap.KernelExplainer(
-                        model.predict, shap.sample(X_array, 100)
-                    )
-                    explainer_used = "KernelExplainer"
-        elif explainer_type == "tree":
-            explainer = shap.TreeExplainer(model)
-            explainer_used = "TreeExplainer"
-        elif explainer_type == "linear":
-            explainer = shap.LinearExplainer(model, X_array)
-            explainer_used = "LinearExplainer"
-        elif explainer_type == "kernel":
-            explainer = shap.KernelExplainer(model.predict, shap.sample(X_array, 100))
-            explainer_used = "KernelExplainer"
-        else:
-            raise ValueError(f"Unknown explainer_type: {explainer_type!r}")
-
-        print(f"[SHAP-Compass] Computing SHAP values with {explainer_used} ...")
-        shap_values = explainer.shap_values(X_array)
-        if isinstance(shap_values, list):
-            shap_values = shap_values[0]
-        shap_values = np.asarray(shap_values, dtype=np.float64)
-        print(f"[SHAP-Compass] SHAP shape = {shap_values.shape}")
-
-        return cls(
-            features=X_array,
-            attributions=shap_values,
-            feature_names=feature_names,
-            target=target,
-        )
+    # --- Advanced feature (disabled): auto-compute SHAP values from a
+    #     trained model. Kept in source for reference; not yet validated
+    #     in the accompanying paper, so it is not part of the public API.
+    # @classmethod
+    # def from_model(
+    #     cls,
+    #     model,
+    #     X: np.ndarray,
+    #     feature_names: list | None = None,
+    #     target: np.ndarray | None = None,
+    #     explainer_type: str = "auto",
+    # ) -> "SHAPCompass":
+    #     """Build a ``SHAPCompass`` by computing SHAP values automatically.
+    #
+    #     Tries :class:`shap.TreeExplainer` first, then falls back to
+    #     :class:`shap.LinearExplainer` / :class:`shap.KernelExplainer`.
+    #     """
+    #     try:
+    #         import shap
+    #     except ImportError as err:  # pragma: no cover - import guard
+    #         raise ImportError(
+    #             "shap is required for SHAPCompass.from_model(). "
+    #             "Install it with: pip install shap"
+    #         ) from err
+    #
+    #     if isinstance(X, pd.DataFrame):
+    #         if feature_names is None:
+    #             feature_names = list(X.columns)
+    #         X_array = X.values.astype(np.float64)
+    #     else:
+    #         X_array = np.asarray(X, dtype=np.float64)
+    #
+    #     if explainer_type == "auto":
+    #         try:
+    #             explainer = shap.TreeExplainer(model)
+    #             explainer_used = "TreeExplainer"
+    #         except Exception:
+    #             try:
+    #                 explainer = shap.LinearExplainer(model, X_array)
+    #                 explainer_used = "LinearExplainer"
+    #             except Exception:
+    #                 explainer = shap.KernelExplainer(
+    #                     model.predict, shap.sample(X_array, 100)
+    #                 )
+    #                 explainer_used = "KernelExplainer"
+    #     elif explainer_type == "tree":
+    #         explainer = shap.TreeExplainer(model)
+    #         explainer_used = "TreeExplainer"
+    #     elif explainer_type == "linear":
+    #         explainer = shap.LinearExplainer(model, X_array)
+    #         explainer_used = "LinearExplainer"
+    #     elif explainer_type == "kernel":
+    #         explainer = shap.KernelExplainer(model.predict, shap.sample(X_array, 100))
+    #         explainer_used = "KernelExplainer"
+    #     else:
+    #         raise ValueError(f"Unknown explainer_type: {explainer_type!r}")
+    #
+    #     print(f"[SHAP-Compass] Computing SHAP values with {explainer_used} ...")
+    #     shap_values = explainer.shap_values(X_array)
+    #     if isinstance(shap_values, list):
+    #         shap_values = shap_values[0]
+    #     shap_values = np.asarray(shap_values, dtype=np.float64)
+    #     print(f"[SHAP-Compass] SHAP shape = {shap_values.shape}")
+    #
+    #     return cls(
+    #         features=X_array,
+    #         attributions=shap_values,
+    #         feature_names=feature_names,
+    #         target=target,
+    #     )
 
     def __init__(
         self,

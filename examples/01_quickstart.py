@@ -19,9 +19,10 @@ import numpy as np
 from shap_compass import (
     SHAPCompass,
     compute_all_metrics,
-    check_consensus_from_results,
-    intensity_stratify_from_results,
 )
+# --- Advanced features (currently disabled in the public API):
+# from shap_compass.consensus import check_consensus_from_results
+# from shap_compass.stage2 import intensity_stratify_from_results
 from shap_compass.plotting import (
     plot_dci_ranking,
     plot_bilayer_heatmap,
@@ -175,7 +176,7 @@ plt.close("all"); print("  spatial_distribution.png")
 
 
 # ---------------------------------------------------------------------------
-# 4. Quality, consensus, Stage 2
+# 4. Quality metrics + CSV outputs
 # ---------------------------------------------------------------------------
 print("\n[3] Quality assessment...")
 
@@ -185,23 +186,25 @@ metrics = compute_all_metrics(
 )
 print(f"  Quality metrics computed: {len(metrics)}")
 
-consensus = check_consensus_from_results(results, top_n=3)
-print(f"  DCR = {consensus.dcr:.1%} ({consensus.quality})")
-
-s2 = intensity_stratify_from_results(
-    results, target=target,
-    features_raw=features, feature_names=feature_names,
-)
-print(f"  Stage 2: {len(s2.split_groups)} split / {len(s2.retained_groups)} retained")
+# --- Advanced features (currently disabled):
+# consensus = check_consensus_from_results(results, top_n=3)
+# print(f"  DCR = {consensus.dcr:.1%} ({consensus.quality})")
+#
+# s2 = intensity_stratify_from_results(
+#     results, target=target,
+#     features_raw=features, feature_names=feature_names,
+# )
+# print(f"  Stage 2: {len(s2.split_groups)} split / {len(s2.retained_groups)} retained")
 
 import pandas as pd
 results.dci.to_csv(OUT / "dci_ranking.csv", index=False)
 pd.DataFrame([{"metric": k, "value": v} for k, v in sorted(metrics.items())]).to_csv(
     OUT / "quality_metrics.csv", index=False,
 )
-if consensus.details is not None and len(consensus.details) > 0:
-    consensus.details.to_csv(OUT / "directional_consensus.csv", index=False)
-s2.summary.to_csv(OUT / "stage2_verdict.csv", index=False)
+# --- Advanced-feature CSVs (disabled):
+# if consensus.details is not None and len(consensus.details) > 0:
+#     consensus.details.to_csv(OUT / "directional_consensus.csv", index=False)
+# s2.summary.to_csv(OUT / "stage2_verdict.csv", index=False)
 
 print(f"\n  All output saved to: {OUT}")
 print("=" * 60)

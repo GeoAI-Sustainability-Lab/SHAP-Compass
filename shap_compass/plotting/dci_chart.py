@@ -33,6 +33,7 @@ def plot_dci_ranking(
     ax.set_title(
         "DCI Ranking — cross-regime feature direction consistency",
         fontsize=12, fontweight="bold",
+        pad=14,
     )
     for x in DCI_BANDS:
         ax.axvline(x=x, color="#888", ls="--", lw=0.8, alpha=0.45)

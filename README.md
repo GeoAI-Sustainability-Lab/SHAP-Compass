@@ -72,17 +72,14 @@ driven by mechanism direction, not by a handful of extreme samples.
 > (panel b) — regimes agree, so the resultant approaches 1.
 - **21 quality metrics (M01–M21)** with two hard pre-filters and a
   three-core hierarchical selector (M13 stability, M18 low-target band
-  separability, M20 target gap), optionally summarised with Borda voting.
+  separability, M20 target gap). Each metric is reported independently —
+  no aggregate / Borda score is produced.
 - **Bilayer feature heatmap** — regimes × features split-cell layout
   (upper half = Z^F, lower half = Z^S, annotated when |Z^F| >= 0.5),
   with optional functional-dimension column grouping (Fig.7 / Fig.11 of
   the paper).
 - **Per-feature unit-circle plot** — one subplot per feature, sorted by
   descending DCI, border colour-coded by DCI band (Fig.9 / Fig.13).
-- **Directional Consensus Rate (DCR)** within-regime diagnostic.
-- **Stage 2** r-vector intensity stratification with a four-condition
-  decision rule for splitting strong / weak sub-regimes.
-- **Multi-target** batch runner with pairwise ARI + DCI rank correlation.
 - Works with **any attribution method** (SHAP, LIME, Integrated
   Gradients, ...). The reference implementation uses TreeExplainer.
 
@@ -92,8 +89,9 @@ driven by mechanism direction, not by a handful of extreme samples.
 pip install -e .
 ```
 
-The SHAP dependency is optional and is only required if you call
-`SHAPCompass.from_model(...)`:
+SHAP-Compass does not call any SHAP explainer itself — the user supplies
+the attribution matrix. The optional `shap` extra is reserved for future
+helper code:
 
 ```bash
 pip install -e .[shap]
@@ -271,6 +269,59 @@ Z^F / Z^S signatures, functional feature groupings, ordered target
 range) — enough to exercise the full pipeline end-to-end without any
 external downloads.
 
+## Output files
+
+Each example writes its artefacts to its own output directory. PNG
+figures go into a `figures/` subfolder; CSVs sit at the top level. All
+files are regenerated deterministically with `random_state=42`.
+
+### `examples/01_quickstart.py` → `examples/quickstart_output/`
+
+| File | Type | Contents |
+|---|---|---|
+| `figures/som_grid.png` | PNG | 7×7 SOM showing neuron-to-regime labels, per-neuron hit counts, and per-neuron mean target. |
+| `figures/ward_dendrogram.png` | PNG | Ward dendrogram on the neuron-level directional fingerprints with the k-cut line. |
+| `figures/dci_ranking.png` | PNG | Bar chart of per-feature DCI, coloured by DCI band. |
+| `figures/group_overview.png` | PNG | Per-regime target-mean bar chart plus a regime × feature Z^S heatmap. |
+| `figures/theta_heatmap.png` | PNG | Regime × feature direction-angle heatmap (θ in radians). |
+| `figures/bilayer_heatmap.png` | PNG | Split-cell heatmap (Z^F upper, Z^S lower) for every regime × feature. |
+| `figures/per_feature_unit_circle.png` | PNG | One unit-circle subplot per feature, frame coloured by DCI band. |
+| `figures/spatial_distribution.png` | PNG | Synthetic 2-D layout of regimes (left) and target field (right). |
+| `dci_ranking.csv` | CSV | Columns: `feature`, `DCI`, `rank`, `band`. One row per feature. |
+| `quality_metrics.csv` | CSV | Columns: `metric`, `value`. One row per metric M01–M21 (plus auxiliary keys such as `M19_min_frac`); no aggregate score. |
+
+### `examples/02_taiwan_synthetic.py` → `examples/taiwan_synthetic/output/`
+
+| File | Type | Contents |
+|---|---|---|
+| `figures/som_grid.png` | PNG | 9×9 SOM with regime labels (`TG1..TG6`), hit map, and per-neuron mean target. |
+| `figures/ward_dendrogram.png` | PNG | Ward dendrogram with the k = 6 cut. |
+| `figures/dci_ranking.png` | PNG | DCI bar chart for the 17 features. |
+| `figures/bilayer_feature_heatmap.png` | PNG | Bilayer heatmap with 7 functional-dimension column groups (Fig.7 / Fig.11 of the paper). |
+| `figures/per_feature_unit_circle.png` | PNG | Per-feature unit-circle panels for all 17 features. |
+| `figures/spatial_distribution.png` | PNG | Synthetic Taiwan-style layout of regimes vs. target. |
+| `dci_ranking.csv` | CSV | Columns: `feature`, `DCI`, `rank`, `band`. |
+| `quality_metrics.csv` | CSV | Columns: `metric`, `value`. One row per quality metric. |
+| `regime_assignments.csv` | CSV | Columns: `synthetic_truth_regime`, `recovered_regime`, `target`. One row per sample — useful for cross-tabulating the recovered regimes against the synthetic ground truth. |
+
+### `examples/03_conus_synthetic.py` → `examples/conus_synthetic/output/`
+
+| File | Type | Contents |
+|---|---|---|
+| `figures/som_grid.png` | PNG | 20×20 SOM with regime labels (`UG1..UG7`), hit map, and per-neuron mean target. |
+| `figures/ward_dendrogram.png` | PNG | Ward dendrogram with the k = 7 cut. |
+| `figures/dci_ranking.png` | PNG | DCI bar chart for all 35 features. |
+| `figures/bilayer_feature_heatmap.png` | PNG | Bilayer heatmap with 9 functional-dimension column groups. |
+| `figures/per_feature_unit_circle_top20.png` | PNG | Per-feature unit-circle panels for the 20 features with the highest DCI. |
+| `figures/spatial_distribution.png` | PNG | Synthetic CONUS-style layout of regimes vs. target. |
+| `dci_ranking.csv` | CSV | Columns: `feature`, `DCI`, `rank`, `band`. |
+| `quality_metrics.csv` | CSV | Columns: `metric`, `value`. |
+| `regime_assignments.csv` | CSV | Columns: `synthetic_truth_regime`, `recovered_regime`, `target`. |
+
+All output directories under `examples/*/output/` and
+`examples/quickstart_output/` are `.gitignore`d — re-run the
+corresponding script to regenerate them.
+
 ## Quality metrics (M01–M21)
 
 | Group | Metrics |
@@ -288,65 +339,18 @@ fraction >= 0.03**. Within the valid pool, **M13 / M18 / M20** are the
 three core selectors used in Section 2.4 of the paper.
 
 ```python
-from shap_compass import compute_all_metrics, borda_rank
+import pandas as pd
+from shap_compass import compute_all_metrics
+
 metrics = compute_all_metrics(
     results, target=y,
     features_raw=X, attributions_raw=shap_values,
 )
-```
 
-## Advanced features
-
-### Directional Consensus Rate (DCR)
-
-```python
-from shap_compass import check_consensus_from_results
-report = check_consensus_from_results(results, top_n=5)
-print(report.summary())
-```
-
-### Stage 2 intensity stratification
-
-```python
-from shap_compass import intensity_stratify_from_results
-s2 = intensity_stratify_from_results(results, target=y, features_raw=X)
-s2.print_summary()
-```
-
-### Multi-target analysis
-
-```python
-from shap_compass import run_multi_target
-
-multi = run_multi_target(
-    features=X,
-    attributions_dict={"NO3": shap_no3, "pH": shap_ph},
-    targets_dict={"NO3": y_no3, "pH": y_ph},
-    feature_names=names,
-    output_dir="output",
-)
-multi.summary()
-```
-
-### From a trained model (auto-SHAP)
-
-```python
-compass = SHAPCompass.from_model(
-    model=trained_model,    # any sklearn-compatible regressor
-    X=X_test,
-    target=y_test,
-    explainer_type="auto",  # tries TreeExplainer first
-)
-results = compass.fit()
-```
-
-### Reusing a pre-trained SOM
-
-```python
-import pickle
-with open("som_model.pkl", "rb") as f:
-    som = pickle.load(f)
-results = compass.fit(pretrained_som=som)
+# Write each metric on its own row — no aggregation.
+pd.DataFrame(
+    [{"metric": k, "value": v} for k, v in sorted(metrics.items())]
+).to_csv("quality_metrics.csv", index=False)
 ```
 
 ## API reference
@@ -357,7 +361,6 @@ results = compass.fit(pretrained_som=som)
 |---|---|
 | `SHAPCompass(features, attributions, feature_names, target)` | Main entry point |
 | `SHAPCompass.fit(som_grid, n_regimes, ...)` | Run the full pipeline |
-| `SHAPCompass.from_model(model, X, target, ...)` | Auto-compute SHAP + run |
 | `SHAPCompassResults` | Result container (see below) |
 
 `SHAPCompassResults` attributes:
@@ -397,7 +400,6 @@ results = compass.fit(pretrained_som=som)
 | `use_som` | `True` | If `False`, apply Ward directly to the sample-level SHAP-Compass matrix. |
 | `som_sigma`, `som_lr`, `som_iterations` | `1.5`, `0.5`, `10000` | MiniSom hyperparameters. |
 | `random_state` | `42` | Seed forwarded to MiniSom. |
-| `pretrained_som` | `None` | Reuse a previously trained MiniSom. |
 
 ## Citation
 
