@@ -127,7 +127,7 @@ def plot_bilayer_heatmap(
     cmap_obj = plt.get_cmap(cmap)
 
     if figsize is None:
-        figsize = (max(12.0, 0.35 * N + 4), max(5.0, 0.9 * n_groups + 3))
+        figsize = (max(13.0, 0.45 * N + 4), max(5.0, 0.9 * n_groups + 3))
 
     gap_col = 0.08
     gap_row = 0.14
@@ -186,10 +186,20 @@ def plot_bilayer_heatmap(
     ax.tick_params(axis="x", length=0, pad=2)
 
     # Dimension labels and separators. Long names in narrow column blocks
-    # are wrapped onto multiple lines so they do not bleed into the
-    # neighbouring dimension's label.
+    # are wrapped onto multiple lines and then each label's font size is
+    # shrunk further so the longest unbreakable word still fits the
+    # column span. This guarantees that no two adjacent dimension labels
+    # ever overlap, even when a single word ("Temperature", "drainage")
+    # is wider than its column block at the base font size.
     cum = 0
-    chars_per_col = 4  # heuristic width budget at fontsize 11 bold
+    chars_per_col = 4  # initial wrap budget at base fontsize
+    base_fontsize = 11.0
+    min_fontsize = 7.0
+    # Estimated rendered width of one bold character at the base font
+    # size, expressed in INCHES. 0.6 em is a conservative figure that
+    # covers most fonts shipped with matplotlib.
+    bold_char_inches_at_base = base_fontsize * 0.6 / 72.0
+    col_width_inches = figsize[0] / max(N, 1)
     max_label_lines = 1
     for dim, sz in dim_sizes:
         left = cum - 0.5
@@ -198,13 +208,31 @@ def plot_bilayer_heatmap(
         wrap_width = max(int(round(sz * chars_per_col)), 4)
         wrapped = textwrap.fill(dim, width=wrap_width, break_long_words=False)
         max_label_lines = max(max_label_lines, wrapped.count("\n") + 1)
+
+        # Auto-shrink: if the longest line of the wrapped label is still
+        # wider than the column span (in inches), scale the font size
+        # down proportionally. The 0.9 factor leaves a small horizontal
+        # margin between adjacent labels.
+        longest_chars = max(
+            (len(line) for line in wrapped.split("\n")), default=0
+        )
+        needed_inches = longest_chars * bold_char_inches_at_base
+        available_inches = col_width_inches * sz * 0.9
+        if needed_inches > available_inches and needed_inches > 0:
+            font_size = max(
+                min_fontsize,
+                base_fontsize * available_inches / needed_inches,
+            )
+        else:
+            font_size = base_fontsize
+
         # va="bottom" anchors the bottom of the text just above the
         # heatmap, so wrapped multi-line labels grow upward into the
         # margin instead of downward into the heatmap.
         ax.text(
             cum + sz / 2 - 0.5, -0.65, wrapped,
             ha="center", va="bottom",
-            fontsize=11, fontweight="bold",
+            fontsize=font_size, fontweight="bold",
             linespacing=0.95,
         )
         cum += sz

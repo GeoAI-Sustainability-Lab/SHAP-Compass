@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from ._palette import regime_color
 
@@ -83,7 +84,11 @@ def plot_spatial(
             lon, lat, c=target, cmap="YlOrRd",
             s=12, alpha=0.7, vmin=0, vmax=10, edgecolors="none",
         )
-        cb = fig.colorbar(sc, ax=ax2, shrink=0.75, pad=0.02)
+        # Attach the colorbar with a fixed-width inset so the right
+        # panel's plot area stays the same width as the left panel.
+        divider = make_axes_locatable(ax2)
+        cax = divider.append_axes("right", size="3.5%", pad=0.08)
+        cb = fig.colorbar(sc, cax=cax)
         cb.set_label(target_label, fontsize=9)
         ax2.set_xlim(xlim); ax2.set_ylim(ylim)
         ax2.set_xlabel(xlabel, fontsize=11)
@@ -91,7 +96,7 @@ def plot_spatial(
         ax2.set_title(f"{target_label} distribution", fontsize=12, fontweight="bold")
         ax2.set_aspect("equal")
 
-    plt.subplots_adjust(wspace=0.08)
+    plt.subplots_adjust(wspace=0.15)
     if save_path:
         fig.savefig(save_path, dpi=dpi, bbox_inches="tight", facecolor="white")
     return fig

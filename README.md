@@ -135,68 +135,89 @@ results.summary()
 ============================================================
 ```
 
-## Example output gallery
+## Example output gallery — Taiwan groundwater case study
 
-The figures below come from `examples/02_taiwan_synthetic.py`
-(N = 2,375, J = 17 features in 7 functional dimensions, SOM 9×9, k = 6).
-Re-running the script reproduces them exactly with `random_state=42`.
+All figures below are the **real Taiwan EPA groundwater case study**
+from the SHAP-Compass paper (n = 2,375 wells, 17 features in 7
+functional dimensions, SOM 9×9, k = 6 attribution regimes). The
+underlying monitoring data is access-restricted (Taiwan EPA permit
+holders only) and cannot be redistributed — the figures are shown
+here strictly for illustration.
 
-### Bilayer feature heatmap (Fig.7 / Fig.11 in the paper)
-
-![Bilayer feature heatmap — Taiwan synthetic](docs/figures/example_bilayer_heatmap.png)
-
-> Rows = regimes TG1..TG6 (descending mean target). Columns = features
-> grouped by functional dimension with black separator lines. Each cell
-> is split horizontally: **upper half = Z^F** (standardised feature
-> value), **lower half = Z^S** (standardised SHAP attribution). Cells
-> with `|Z^F| >= 0.5` are annotated. Mismatched colours between the two
-> halves of a cell flag sign-flip mechanisms.
-
-The same layout scales to 31 features / 9 dimensions in the
-CONUS-style synthetic example:
-
-![Bilayer feature heatmap — CONUS synthetic](docs/figures/example_bilayer_heatmap_conus.png)
-
-### Per-feature unit-circle plot (Fig.9 / Fig.13)
-
-![Per-feature unit circle](docs/figures/example_per_feature_unit_circle.png)
-
-> One small subplot per feature, sorted by descending DCI. Each spoke is
-> a regime centroid. **Subplot border colour** encodes the DCI band:
-> green ≥ 0.75 (universal), yellow 0.50–0.75, orange 0.25–0.50, red
-> < 0.25 (context-dependent). At a glance you can read which features
-> drive every regime the same way (green frames) and which features are
-> regime-specific (red frames).
-
-### DCI ranking
-
-![DCI ranking](docs/figures/example_dci_ranking.png)
-
-> DCI bar chart — features sorted by cross-regime direction consistency;
-> bar colour encodes the DCI band (green high / yellow medium /
-> orange low / red context-dependent).
-
-### SOM neuron grid
-
-![SOM grid](docs/figures/example_som_grid.png)
-
-> 9 × 9 SOM: (left) regime label per neuron, (centre) hit map showing
-> samples-per-neuron, (right) per-neuron mean target value.
+The bundled `examples/02_taiwan_synthetic.py` script reproduces the
+**same pipeline shape** end-to-end on a fully synthetic dataset so the
+package can be evaluated without any data download. Its outputs land in
+`examples/taiwan_synthetic/output/figures/` and have the same layout as
+the figures below, only with synthetic numbers.
 
 ### Spatial regime distribution
 
-![Spatial distribution](docs/figures/example_spatial_distribution.png)
+![Taiwan spatial regime distribution](docs/figures/taiwan_real_spatial.png)
 
-> Synthetic spatial layout of the recovered regimes (left panel) and the
-> target field (right panel) — `plot_spatial` / `plot_group_facets`
-> reproduce Fig.8 / Fig.12 of the paper.
+> Six panels show the actual well locations assigned to each regime
+> (with regime size and mean NO3-N annotated); the seventh panel
+> overlays observed NO3-N concentrations on the same map. The recovered
+> regimes form spatially coherent zones (Moran's I = 0.807) even though
+> the SHAP-Compass clustering uses **no spatial coordinates at all** —
+> the spatial structure emerges purely from the directional attribution
+> mechanisms encoded by `(Z^F, Z^S)`.
+
+### Bilayer feature heatmap (Fig.7 in the paper)
+
+![Bilayer feature heatmap — Taiwan](docs/figures/taiwan_real_bilayer_heatmap.png)
+
+> Rows = regimes TG1..TG6 (descending mean NO3-N). Columns = the 17
+> features grouped by functional dimension with black separators. Each
+> cell is split horizontally: **upper half = Z^F** (standardised
+> feature value), **lower half = Z^S** (standardised SHAP attribution).
+> Cells with `|Z^F| >= 0.5` are annotated. Mismatched colours between a
+> cell's two halves flag **sign-flip mechanisms** — the same feature
+> value pushes the model up in one regime and down in another.
+
+### Per-feature unit-circle plot (Fig.9 in the paper)
+
+![Per-feature unit circle — Taiwan](docs/figures/taiwan_real_per_feature_unit_circle.png)
+
+> One panel per feature, sorted by descending DCI. Each spoke is one
+> regime centroid on the `(Z^F, Z^S)` unit circle. **Subplot border
+> colour** encodes the DCI band: green ≥ 0.75 (universal),
+> yellow 0.50–0.75, orange 0.25–0.50, red < 0.25 (context-dependent).
+> At a glance you can read which features drive every regime the same
+> way (green frames) and which features are regime-specific
+> (red frames).
+
+### DCI ranking
+
+![DCI ranking — Taiwan](docs/figures/taiwan_real_dci_ranking.png)
+
+> DCI bar chart with bootstrap confidence intervals — the 17 features
+> sorted by cross-regime direction consistency. Bar colour encodes the
+> DCI band (green high / yellow medium / orange low / red
+> context-dependent).
+
+### SOM neuron grid
+
+![SOM grid — Taiwan](docs/figures/taiwan_real_som_grid.png)
+
+> 9 × 9 SOM trained on the Taiwan SHAP-Compass matrix: (left) regime
+> label per neuron, (centre) hit map showing samples-per-neuron,
+> (right) per-neuron mean NO3-N.
 
 ### Ward dendrogram
 
-![Ward dendrogram](docs/figures/example_ward_dendrogram.png)
+![Ward dendrogram — Taiwan](docs/figures/taiwan_real_ward_dendrogram.png)
 
 > Ward dendrogram on the neuron-level directional fingerprints —
 > red dashed line marks the k = 6 cut.
+
+### CONUS-scale check
+
+The same pipeline scales to **76 features / 9 functional dimensions**
+in the paper's CONUS validation case (n = 12,082 wells, k = 7 regimes,
+Moran's I = 0.693). The bundled `examples/03_conus_synthetic.py`
+demonstrates the high-dimensional code path on synthetic data:
+
+![Bilayer feature heatmap — CONUS synthetic](docs/figures/example_bilayer_heatmap_conus.png)
 
 ## Producing the paper's headline figures
 
@@ -271,56 +292,21 @@ external downloads.
 
 ## Output files
 
-Each example writes its artefacts to its own output directory. PNG
-figures go into a `figures/` subfolder; CSVs sit at the top level. All
-files are regenerated deterministically with `random_state=42`.
+Each example writes its artefacts to its own output directory — PNG
+figures in `figures/`, CSV summaries at the top level. All output
+directories are `.gitignore`d; re-run the script to regenerate them.
 
-### `examples/01_quickstart.py` → `examples/quickstart_output/`
-
-| File | Type | Contents |
-|---|---|---|
-| `figures/som_grid.png` | PNG | 7×7 SOM showing neuron-to-regime labels, per-neuron hit counts, and per-neuron mean target. |
-| `figures/ward_dendrogram.png` | PNG | Ward dendrogram on the neuron-level directional fingerprints with the k-cut line. |
-| `figures/dci_ranking.png` | PNG | Bar chart of per-feature DCI, coloured by DCI band. |
-| `figures/group_overview.png` | PNG | Per-regime target-mean bar chart plus a regime × feature Z^S heatmap. |
-| `figures/theta_heatmap.png` | PNG | Regime × feature direction-angle heatmap (θ in radians). |
-| `figures/bilayer_heatmap.png` | PNG | Split-cell heatmap (Z^F upper, Z^S lower) for every regime × feature. |
-| `figures/per_feature_unit_circle.png` | PNG | One unit-circle subplot per feature, frame coloured by DCI band. |
-| `figures/spatial_distribution.png` | PNG | Synthetic 2-D layout of regimes (left) and target field (right). |
-| `dci_ranking.csv` | CSV | Columns: `feature`, `DCI`, `rank`, `band`. One row per feature. |
-| `quality_metrics.csv` | CSV | Columns: `metric`, `value`. One row per metric M01–M21 (plus auxiliary keys such as `M19_min_frac`); no aggregate score. |
-
-### `examples/02_taiwan_synthetic.py` → `examples/taiwan_synthetic/output/`
-
-| File | Type | Contents |
-|---|---|---|
-| `figures/som_grid.png` | PNG | 9×9 SOM with regime labels (`TG1..TG6`), hit map, and per-neuron mean target. |
-| `figures/ward_dendrogram.png` | PNG | Ward dendrogram with the k = 6 cut. |
-| `figures/dci_ranking.png` | PNG | DCI bar chart for the 17 features. |
-| `figures/bilayer_feature_heatmap.png` | PNG | Bilayer heatmap with 7 functional-dimension column groups (Fig.7 / Fig.11 of the paper). |
-| `figures/per_feature_unit_circle.png` | PNG | Per-feature unit-circle panels for all 17 features. |
-| `figures/spatial_distribution.png` | PNG | Synthetic Taiwan-style layout of regimes vs. target. |
-| `dci_ranking.csv` | CSV | Columns: `feature`, `DCI`, `rank`, `band`. |
-| `quality_metrics.csv` | CSV | Columns: `metric`, `value`. One row per quality metric. |
-| `regime_assignments.csv` | CSV | Columns: `synthetic_truth_regime`, `recovered_regime`, `target`. One row per sample — useful for cross-tabulating the recovered regimes against the synthetic ground truth. |
-
-### `examples/03_conus_synthetic.py` → `examples/conus_synthetic/output/`
-
-| File | Type | Contents |
-|---|---|---|
-| `figures/som_grid.png` | PNG | 20×20 SOM with regime labels (`UG1..UG7`), hit map, and per-neuron mean target. |
-| `figures/ward_dendrogram.png` | PNG | Ward dendrogram with the k = 7 cut. |
-| `figures/dci_ranking.png` | PNG | DCI bar chart for all 35 features. |
-| `figures/bilayer_feature_heatmap.png` | PNG | Bilayer heatmap with 9 functional-dimension column groups. |
-| `figures/per_feature_unit_circle_top20.png` | PNG | Per-feature unit-circle panels for the 20 features with the highest DCI. |
-| `figures/spatial_distribution.png` | PNG | Synthetic CONUS-style layout of regimes vs. target. |
-| `dci_ranking.csv` | CSV | Columns: `feature`, `DCI`, `rank`, `band`. |
-| `quality_metrics.csv` | CSV | Columns: `metric`, `value`. |
-| `regime_assignments.csv` | CSV | Columns: `synthetic_truth_regime`, `recovered_regime`, `target`. |
-
-All output directories under `examples/*/output/` and
-`examples/quickstart_output/` are `.gitignore`d — re-run the
-corresponding script to regenerate them.
+| File | Contents |
+|---|---|
+| `figures/som_grid.png` | SOM neuron map: regime labels, hit counts, per-neuron mean target. |
+| `figures/ward_dendrogram.png` | Ward dendrogram on neuron-level fingerprints with the k-cut line. |
+| `figures/dci_ranking.png` | Per-feature DCI bar chart, coloured by DCI band. |
+| `figures/bilayer_feature_heatmap.png` | Regime × feature split-cell heatmap (Z^F upper, Z^S lower). |
+| `figures/per_feature_unit_circle.png` | One unit-circle panel per feature, frame coloured by DCI band. |
+| `figures/spatial_distribution.png` | Spatial layout of regimes alongside the target field. |
+| `dci_ranking.csv` | Per-feature DCI, rank, and band. |
+| `quality_metrics.csv` | One row per quality metric (M01–M21); no aggregate score. |
+| `regime_assignments.csv` | Per-sample truth regime, recovered regime, target (Taiwan / CONUS examples). |
 
 ## Quality metrics (M01–M21)
 
@@ -427,18 +413,27 @@ Foundational references (also worth citing where relevant):
 
 ## Regenerating the README's figures
 
-```bash
-# Conceptual figures (pipeline, unit-circle projection, DCI geometry)
-python docs/build_concept_figures.py
+The conceptual figures (pipeline, unit-circle projection, DCI geometry)
+are auto-generated:
 
-# Example output figures — re-run an example, then copy its PNGs into docs/figures/
-python examples/02_taiwan_synthetic.py
-cp examples/taiwan_synthetic/output/figures/*.png docs/figures/
+```bash
+python docs/build_concept_figures.py
 ```
 
-The example output directories under `examples/*/output/` are
-`.gitignore`d; `docs/figures/` and `docs/concepts/` are tracked so the
-README always renders on GitHub even before a user runs anything.
+The Taiwan case-study figures (`docs/figures/taiwan_real_*.png`) and the
+CONUS synthetic bilayer (`docs/figures/example_bilayer_heatmap_conus.png`)
+are static assets committed to the repo — the Taiwan ones come from the
+paper and depend on access-restricted EPA data, so they cannot be
+regenerated from this repository alone.
+
+The bundled example scripts still produce their own figures under
+`examples/*/output/figures/` (synthetic, gitignored). Re-run them with:
+
+```bash
+python examples/01_quickstart.py
+python examples/02_taiwan_synthetic.py
+python examples/03_conus_synthetic.py
+```
 
 ## License
 

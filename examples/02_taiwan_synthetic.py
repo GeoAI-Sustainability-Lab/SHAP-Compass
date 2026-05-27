@@ -11,6 +11,14 @@ therefore *simulates* a comparable directional structure so that the
 SHAP-Compass package can be evaluated end-to-end without any data
 download. Feature names, dimension groupings, regime sizes, and target
 distribution are illustrative only.
+
+Note on the spatial PNG: the ``spatial_distribution.png`` written under
+``examples/taiwan_synthetic/output/figures/`` exists purely to verify
+that ``plot_spatial`` runs end-to-end on the synthetic coordinates. It
+is NOT a geographic showcase — the synthetic coordinates have no
+real-world meaning. The README's spatial figure
+(``docs/figures/taiwan_real_spatial.png``) shows the actual paper result
+on real Taiwan EPA monitoring wells.
 """
 
 from pathlib import Path
@@ -113,6 +121,20 @@ def make_taiwan_synthetic(n_total: int = 2375, random_state: int = 42):
     delta = n_total - sum(rg["n"] for rg in regimes)
     regimes[2]["n"] += delta
 
+    # Per-regime spatial sub-regions arranged in a Taiwan-shaped layout
+    # (rough north-south elongated island). Tight noise + well-separated
+    # centroids give each regime its own visible cluster while still
+    # allowing some realistic overlap at the boundaries.
+    spatial_centers = {
+        1: (120.55, 23.75),  # western plain  (R1 — agri / livestock)
+        2: (120.50, 22.70),  # southern plain (R2 — agri + leaching)
+        3: (121.45, 25.05),  # northern plain (R3 — agri + temperature)
+        4: (121.45, 23.40),  # eastern coast  (R4 — soil drainage)
+        5: (120.95, 23.30),  # south-central mountains (R5 — forest)
+        6: (121.15, 24.40),  # north-central mountains (R6 — high elevation)
+    }
+    spatial_scale = 0.20
+
     feature_blocks: list[np.ndarray] = []
     shap_blocks: list[np.ndarray] = []
     target_blocks: list[np.ndarray] = []
@@ -139,9 +161,12 @@ def make_taiwan_synthetic(n_total: int = 2375, random_state: int = 42):
         )
         yg = np.clip(yg, 0.01, 25.0)
 
-        # Synthetic spatial coordinates that vary by regime
-        cx = 121.0 + 0.8 * rng.standard_normal(n) + (idx - 3) * 0.3
-        cy = 23.5 + 0.7 * rng.standard_normal(n) + (idx - 3) * 0.25
+        # Synthetic spatial coordinates: each regime sits in its own
+        # Taiwan sub-region with mild noise so the clusters are visibly
+        # separated on the map while still overlapping at the edges.
+        cx_center, cy_center = spatial_centers[idx]
+        cx = cx_center + spatial_scale * rng.standard_normal(n)
+        cy = cy_center + spatial_scale * rng.standard_normal(n)
 
         feature_blocks.append(Xg)
         shap_blocks.append(Sg)
