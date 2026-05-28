@@ -1,11 +1,7 @@
 # SHAP-Compass
 
-**Directional SHAP Attribution Clustering for GeoAI** — a Python toolkit
-implementing the framework described in:
-
-> *SHAP-Compass: A Regime Level Interpretability Framework for Revealing
-> Spatially Heterogeneous Attribution Mechanisms in GeoAI.* ISPRS Journal
-> of Photogrammetry and Remote Sensing, 2026 (under review).
+## Acknowledgement
+This work was supported (in part) by the National Science and Technology Council (NSTC), Taiwan, under grant numbers NSTC 114-2634-F-005-002 (Smart Sustainable New Agriculture Research Center, SMARTer) and NSTC 114-2121-M-005-007-MY2.
 
 SHAP-Compass projects every `(feature value, SHAP attribution)` pair onto
 the unit circle, then groups samples whose attribution directionalities
