@@ -40,31 +40,31 @@ class SHAPCompassResults:
     """Container for the result of a single SHAP-Compass run."""
 
     # Sample-level
-    labels: np.ndarray = None
-    theta: np.ndarray = None
-    r: np.ndarray = None
-    cossin: np.ndarray = None
-    ZF: np.ndarray = None
-    ZS: np.ndarray = None
+    labels: Optional[np.ndarray] = None
+    theta: Optional[np.ndarray] = None
+    r: Optional[np.ndarray] = None
+    cossin: Optional[np.ndarray] = None
+    ZF: Optional[np.ndarray] = None
+    ZS: Optional[np.ndarray] = None
 
     # Neuron-level
-    neuron_theta: np.ndarray = None
-    neuron_r: np.ndarray = None
-    neuron_cossin: np.ndarray = None
-    neuron_labels: np.ndarray = None
-    neuron_sizes: np.ndarray = None
+    neuron_theta: Optional[np.ndarray] = None
+    neuron_r: Optional[np.ndarray] = None
+    neuron_cossin: Optional[np.ndarray] = None
+    neuron_labels: Optional[np.ndarray] = None
+    neuron_sizes: Optional[np.ndarray] = None
     neuron_ids: list = field(default_factory=list)
     som_grid: tuple = (9, 9)
-    _som: object = None
-    _sample_to_neuron: np.ndarray = None
+    _som: Optional[object] = None
+    _sample_to_neuron: Optional[np.ndarray] = None
 
     # Regime-level
-    group_theta: np.ndarray = None
+    group_theta: Optional[np.ndarray] = None
     n_groups: int = 0
     feature_names: list = field(default_factory=list)
 
     # Quality
-    dci: pd.DataFrame = None
+    dci: Optional[pd.DataFrame] = None
     eta_sq: float = 0.0
 
     # ----------------------------------------------------------------

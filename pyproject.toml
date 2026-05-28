@@ -9,8 +9,13 @@ description = "SHAP-Compass: a regime-level interpretability framework for spati
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
+# NOTE: replace the <...> placeholders before tagging the paper release.
+# See TODO_BEFORE_RELEASE.md for the full checklist.
 authors = [
-    {name = "SHAP-Compass Contributors"},
+    {name = "<FIRST_AUTHOR_NAME>", email = "<FIRST_AUTHOR_EMAIL>"},
+]
+maintainers = [
+    {name = "<FIRST_AUTHOR_NAME>", email = "<FIRST_AUTHOR_EMAIL>"},
 ]
 keywords = [
     "explainable-ai", "shap", "clustering", "self-organizing-map",
@@ -44,13 +49,17 @@ dev = ["pytest>=7.0", "pytest-cov", "ruff"]
 docs = ["sphinx", "sphinx-rtd-theme"]
 
 [project.urls]
-Homepage = "https://github.com/YOUR_USERNAME/shap-compass"
-Documentation = "https://github.com/YOUR_USERNAME/shap-compass#readme"
-Repository = "https://github.com/YOUR_USERNAME/shap-compass"
-Issues = "https://github.com/YOUR_USERNAME/shap-compass/issues"
+# Replace GeoAI-Sustainability-Lab with the GitHub user or organisation before release.
+Homepage = "https://github.com/GeoAI-Sustainability-Lab/shap-compass"
+Documentation = "https://github.com/GeoAI-Sustainability-Lab/shap-compass#readme"
+Repository = "https://github.com/GeoAI-Sustainability-Lab/shap-compass"
+Issues = "https://github.com/GeoAI-Sustainability-Lab/shap-compass/issues"
 
 [tool.setuptools.packages.find]
 include = ["shap_compass*"]
+
+[tool.setuptools.package-data]
+shap_compass = ["data/*.csv.gz"]
 
 [tool.ruff]
 line-length = 100

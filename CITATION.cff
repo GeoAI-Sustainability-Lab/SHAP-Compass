@@ -1,0 +1,43 @@
+# Machine-readable citation file. GitHub renders a "Cite this repository"
+# button automatically when this file is present.
+#
+# All <...> placeholders MUST be replaced before tagging the paper release.
+# See TODO_BEFORE_RELEASE.md for the checklist.
+cff-version: 1.2.0
+title: "SHAP-Compass: A Regime-Level Interpretability Framework for Spatially Heterogeneous Attribution Mechanisms in GeoAI"
+message: "If you use this software, please cite both the software and the associated paper (see preferred-citation)."
+type: software
+version: "0.2.0"
+date-released: "2026-05-27"
+license: MIT
+repository-code: "https://github.com/GeoAI-Sustainability-Lab/shap-compass"
+keywords:
+  - explainable-ai
+  - shap
+  - clustering
+  - self-organizing-map
+  - directional-statistics
+  - geoai
+  - attribution-regime
+authors:
+  - family-names: "<FIRST_AUTHOR_FAMILY_NAME>"
+    given-names: "<FIRST_AUTHOR_GIVEN_NAMES>"
+    email: "<FIRST_AUTHOR_EMAIL>"
+    orcid: "https://orcid.org/<FIRST_AUTHOR_ORCID>"
+    affiliation: "<FIRST_AUTHOR_AFFILIATION>"
+
+preferred-citation:
+  type: article
+  title: "SHAP-Compass: A Regime-Level Interpretability Framework for Revealing Spatially Heterogeneous Attribution Mechanisms in GeoAI"
+  journal: "ISPRS Journal of Photogrammetry and Remote Sensing"
+  year: 2026
+  # Uncomment and fill once the paper is accepted / has a DOI.
+  # doi: "<PAPER_DOI>"
+  # volume: <VOLUME>
+  # start: <START_PAGE>
+  # end: <END_PAGE>
+  authors:
+    - family-names: "<FIRST_AUTHOR_FAMILY_NAME>"
+      given-names: "<FIRST_AUTHOR_GIVEN_NAMES>"
+      orcid: "https://orcid.org/<FIRST_AUTHOR_ORCID>"
+      affiliation: "<FIRST_AUTHOR_AFFILIATION>"

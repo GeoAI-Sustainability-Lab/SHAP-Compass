@@ -1,34 +1,56 @@
 # SHAP-Compass examples
 
-Three self-contained scripts. All three use **synthetic data only** —
-no real groundwater monitoring data is bundled with the package.
+Two scripts, both running on the **public-domain CONUS groundwater
+nitrate dataset** that ships with the package
+(`shap_compass.load_conus_nitrate`). No external download is required.
 
 | Script | Samples | Features | SOM | k | What it shows |
 |---|---|---|---|---|---|
-| `01_quickstart.py` | 500 | 8 | 7 x 7 | 3 | Smallest end-to-end demo. Runs in seconds. |
-| `02_taiwan_synthetic.py` | 2,375 | 17 (in 7 functional dimensions) | 9 x 9 | 6 | Mirrors the Taiwan case study (Section 3.1) of the paper. |
-| `03_conus_synthetic.py` | 6,000 | 35 (in 9 functional dimensions) | 20 x 20 | 7 | Mirrors the CONUS case study (Section 3.2), at a smaller feature count for runtime. |
-
-## Why no real data?
-
-The paper's Taiwan case relies on Taiwan EPA monitoring data whose terms
-of use restrict redistribution; the CONUS case extends the dataset
-curated by Ransom et al. (2022, *STOTEN*). Both are publicly retrievable
-by their respective owners, but the SHAP-Compass package focuses on the
-*method* and does not bundle source data. The synthetic generators in
-these examples reproduce the **directional structure** that the paper
-describes (multiple attribution regimes with distinct Z^F / Z^S
-signatures, functional feature groupings, an ordered target range), so
-that the full pipeline (transform → SOM → Ward → DCI → bilayer heatmap)
-can be exercised without any external downloads.
+| `01_quickstart.py` | 2,000 | 29 | 9 × 9 | 5 | Smallest end-to-end demo. Trains a regressor, computes SHAP, runs SHAP-Compass, prints a one-screen summary. Finishes in under a minute. |
+| `02_conus_full_pipeline.py` | 12,082 | 29 | 12 × 12 | 6 | Full pipeline with all gallery figures and CSV summaries written under `examples/conus_output/`. |
 
 ## Running
 
 ```bash
-pip install -e .
+pip install -e ".[shap]"
 python examples/01_quickstart.py
-python examples/02_taiwan_synthetic.py
-python examples/03_conus_synthetic.py
+python examples/02_conus_full_pipeline.py
 ```
 
-Output figures and CSVs land in `examples/<name>/output/`.
+The `shap` extra is needed to compute attributions inside the example
+scripts; SHAP-Compass itself does not depend on the `shap` library.
+
+## Data source
+
+The bundled dataset is a public-domain U.S. Geological Survey
+groundwater nitrate release:
+
+> Ransom, K.M., Nolan, B.T., Stackelberg, P.E., Belitz, K., Fram, M.S.
+> (2021). *Machine learning predictions of nitrate in groundwater used
+> for drinking supply in the conterminous United States: data release*.
+> U.S. Geological Survey. <https://doi.org/10.5066/P9PQ622D>
+
+The bundled subset keeps 29 of the original features (spanning
+nitrogen inputs, land use, soil, drainage, hydrology, climate, well
+construction and population), well coordinates, and the target `NO3`
+in mg/L. The full release is available from USGS ScienceBase.
+
+## Bringing your own data
+
+Replace the `load_conus_nitrate()` call with your own `(X, y)` pair,
+plus an attribution matrix from any explainer:
+
+```python
+from shap_compass import SHAPCompass
+
+results = SHAPCompass(
+    features=X,                # (n_samples, n_features)
+    attributions=shap_values,  # (n_samples, n_features)
+    feature_names=feature_names,
+    target=y,
+).fit(som_grid=(9, 9), n_regimes=6, random_state=42)
+```
+
+Any attribution method works — SHAP TreeExplainer / LinearExplainer /
+KernelExplainer, LIME, Integrated Gradients, etc. — as long as the
+output matrix has the same shape as `features`.

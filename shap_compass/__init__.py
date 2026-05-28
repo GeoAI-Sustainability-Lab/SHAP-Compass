@@ -6,12 +6,6 @@ across spatial / environmental contexts. SHAP-Compass projects each
 attribution directionalities are similar using a SOM + Ward two-stage
 clustering, and quantifies cross-regime consistency with the Directional
 Consistency Index (DCI).
-
-Reference
----------
-SHAP-Compass: A Regime Level Interpretability Framework for Revealing
-Spatially Heterogeneous Attribution Mechanisms in GeoAI.
-ISPRS Journal of Photogrammetry and Remote Sensing, 2026 (under review).
 """
 
 __version__ = "0.2.0"
@@ -53,6 +47,11 @@ from .quality import (
     METRIC_NAMES,
     METRIC_COLS,
 )
+from .data import (
+    load_conus_nitrate,
+    CONUS_FEATURE_DIMENSIONS,
+    CONUS_FEATURE_NAMES,
+)
 
 __all__ = [
     "__version__",
@@ -87,4 +86,8 @@ __all__ = [
     "compute_all_metrics",
     "METRIC_NAMES",
     "METRIC_COLS",
+    # Bundled real-world dataset
+    "load_conus_nitrate",
+    "CONUS_FEATURE_DIMENSIONS",
+    "CONUS_FEATURE_NAMES",
 ]
