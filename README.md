@@ -1,8 +1,7 @@
 # SHAP-Compass
-### Acknowledgement
-This work was supported (in part) by the National Science and Technology Council (NSTC), Taiwan, under grant numbers NSTC 114-2634-F-005-002 (Smart Sustainable New Agriculture Research Center, SMARTer) and NSTC 114-2121-M-005-007-MY2.
 
 ## SHAP-Compass Introduction
+
 SHAP-Compass projects every `(feature value, SHAP attribution)` pair onto
 the unit circle, then groups samples whose attribution directionalities
 are similar using a SOM + Ward two-stage clustering. The resulting
@@ -42,15 +41,15 @@ samples.
 
 ## Key terminology
 
-| Term | Symbol / role |
-|---|---|
-| attribution regime | label assigned by SHAP-Compass to each sample |
-| attribution directionality | the property quantified by θ |
-| SHAP-Compass matrix | `N × 2J` input to the SOM |
-| directional fingerprint | `2J`-dim vector per SOM neuron |
-| Directional Consistency Index (DCI) | per-feature cross-regime concentration in `[0, 1]` |
-| axial doubling | `2θ` transform, so θ and `θ + π` are the same axis |
-| bilayer feature heatmap | split-cell $(Z^{F}, Z^{S})$ view per regime × feature |
+| Term                                | Symbol / role                                              |
+| ----------------------------------- | ---------------------------------------------------------- |
+| attribution regime                  | label assigned by SHAP-Compass to each sample              |
+| attribution directionality          | the property quantified by θ                              |
+| SHAP-Compass matrix                 | `N × 2J` input to the SOM                               |
+| directional fingerprint             | `2J`-dim vector per SOM neuron                           |
+| Directional Consistency Index (DCI) | per-feature cross-regime concentration in `[0, 1]`       |
+| axial doubling                      | `2θ` transform, so θ and `θ + π` are the same axis |
+| bilayer feature heatmap             | split-cell$(Z^{F}, Z^{S})$ view per regime × feature    |
 
 ## Key features
 
@@ -152,12 +151,12 @@ Sample output:
 
 `SHAPCompass(...)` only requires three matrices and an optional target:
 
-| Argument | Shape | Notes |
-|---|---|---|
-| `features` | `(n_samples, n_features)` | Raw feature values. Any numeric matrix; can be NumPy, pandas, or polars (converted internally). |
-| `attributions` | `(n_samples, n_features)` | Per-sample × per-feature attributions. Typically SHAP values, but LIME, Integrated Gradients, or any other method is accepted. |
-| `feature_names` | list of `n_features` strings | Used for axis labels and the DCI table. |
-| `target` | `(n_samples,)`, optional | Numeric target. If provided, regimes are relabelled in descending order of mean target — useful for ordered phenomena (e.g. pollution concentration). |
+| Argument          | Shape                          | Notes                                                                                                                                                  |
+| ----------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `features`      | `(n_samples, n_features)`    | Raw feature values. Any numeric matrix; can be NumPy, pandas, or polars (converted internally).                                                        |
+| `attributions`  | `(n_samples, n_features)`    | Per-sample × per-feature attributions. Typically SHAP values, but LIME, Integrated Gradients, or any other method is accepted.                        |
+| `feature_names` | list of `n_features` strings | Used for axis labels and the DCI table.                                                                                                                |
+| `target`        | `(n_samples,)`, optional     | Numeric target. If provided, regimes are relabelled in descending order of mean target — useful for ordered phenomena (e.g. pollution concentration). |
 
 A minimal real-world recipe with scikit-learn + SHAP:
 
@@ -271,9 +270,9 @@ the script reproduces them exactly with `random_state=42`.
 
 ## Examples
 
-| Script | What it does |
-|---|---|
-| `examples/01_quickstart.py` | ~2,000-sample demo end-to-end in under a minute. |
+| Script                                 | What it does                                                            |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| `examples/01_quickstart.py`          | ~2,000-sample demo end-to-end in under a minute.                        |
 | `examples/02_conus_full_pipeline.py` | Full 12,082-sample analysis with all gallery figures and CSV summaries. |
 
 Run them from the repository root:
@@ -291,31 +290,31 @@ The full pipeline writes its figures and CSVs under
 
 The full pipeline example produces:
 
-| File | Contents |
-|---|---|
-| `figures/som_grid.png` | SOM neuron map: regime labels, hit counts, per-neuron mean target. |
-| `figures/dci_ranking.png` | Per-feature DCI bar chart, coloured by DCI band. |
-| `figures/bilayer_feature_heatmap.png` | Regime × feature split-cell heatmap. |
-| `figures/per_feature_unit_circle.png` | One unit-circle panel per feature. |
-| `figures/spatial_distribution.png` | Recovered regimes alongside the target field. |
-| `dci_ranking.csv` | Per-feature DCI, rank, and band. |
-| `quality_metrics.csv` | One row per quality metric (M01–M21); no aggregate score. |
-| `regime_assignments.csv` | Per-sample lat, lon, target, and recovered regime label. |
+| File                                    | Contents                                                           |
+| --------------------------------------- | ------------------------------------------------------------------ |
+| `figures/som_grid.png`                | SOM neuron map: regime labels, hit counts, per-neuron mean target. |
+| `figures/dci_ranking.png`             | Per-feature DCI bar chart, coloured by DCI band.                   |
+| `figures/bilayer_feature_heatmap.png` | Regime × feature split-cell heatmap.                              |
+| `figures/per_feature_unit_circle.png` | One unit-circle panel per feature.                                 |
+| `figures/spatial_distribution.png`    | Recovered regimes alongside the target field.                      |
+| `dci_ranking.csv`                     | Per-feature DCI, rank, and band.                                   |
+| `quality_metrics.csv`                 | One row per quality metric (M01–M21); no aggregate score.         |
+| `regime_assignments.csv`              | Per-sample lat, lon, target, and recovered regime label.           |
 
 Output directories under `examples/*/` are `.gitignore`d; re-run the
 scripts to regenerate them.
 
 ## Quality metrics (M01–M21)
 
-| Group | Metrics |
-|---|---|
-| Signal chain | M01 sum-SHAP~target R², M02 non-linearity richness |
-| SOM diagnostics | M03 topological preservation, M04 quantisation, M05 neuron utilisation |
-| Direction-vs-magnitude | M06 signal uniqueness, M07 SHAP-Compass richness |
-| Internal validity | M08 silhouette, M09 Calinski-Harabasz, M10 Davies-Bouldin, M11 cophenetic |
-| External validation | M12 eta², M13 bootstrap ARI, M14 OOS retention, M15 within-regime sign agreement |
-| Mechanism / k | M16 anti-cyclicity, M17 k-optimality, **M18 low-target eta²** |
-| Interpretability | **M19 evenness (>=3% floor)**, **M20 adjacent target gap / IQR**, M21 inter-regime diversity |
+| Group                  | Metrics                                                                                                  |
+| ---------------------- | -------------------------------------------------------------------------------------------------------- |
+| Signal chain           | M01 sum-SHAP~target R², M02 non-linearity richness                                                      |
+| SOM diagnostics        | M03 topological preservation, M04 quantisation, M05 neuron utilisation                                   |
+| Direction-vs-magnitude | M06 signal uniqueness, M07 SHAP-Compass richness                                                         |
+| Internal validity      | M08 silhouette, M09 Calinski-Harabasz, M10 Davies-Bouldin, M11 cophenetic                                |
+| External validation    | M12 eta², M13 bootstrap ARI, M14 OOS retention, M15 within-regime sign agreement                        |
+| Mechanism / k          | M16 anti-cyclicity, M17 k-optimality,**M18 low-target eta²**                                      |
+| Interpretability       | **M19 evenness (>=3% floor)**, **M20 adjacent target gap / IQR**, M21 inter-regime diversity |
 
 Hard pre-filters: **M05 == 1.0** (no dead neurons) and
 **M19 min fraction >= 0.03**. Within the valid pool, **M13 / M18 / M20**
@@ -340,49 +339,49 @@ pd.DataFrame(
 
 ### Core
 
-| Object | Description |
-|---|---|
-| `SHAPCompass(features, attributions, feature_names, target)` | Main entry point. |
-| `SHAPCompass.fit(som_grid, n_regimes, ...)` | Run the full pipeline. |
-| `SHAPCompassResults` | Result container (see below). |
-| `load_conus_nitrate(...)` | Load the bundled CONUS groundwater dataset. |
+| Object                                                         | Description                                 |
+| -------------------------------------------------------------- | ------------------------------------------- |
+| `SHAPCompass(features, attributions, feature_names, target)` | Main entry point.                           |
+| `SHAPCompass.fit(som_grid, n_regimes, ...)`                  | Run the full pipeline.                      |
+| `SHAPCompassResults`                                         | Result container (see below).               |
+| `load_conus_nitrate(...)`                                    | Load the bundled CONUS groundwater dataset. |
 
 `SHAPCompassResults` attributes:
 
-| Attribute | Shape | Description |
-|---|---|---|
-| `.labels` | `(n,)` | Regime labels (1-indexed). |
-| `.theta` | `(n, p)` | Direction angles. |
-| `.r` | `(n, p)` | Signal magnitudes. |
-| `.cossin` | `(n, 2p)` | Per-sample SHAP-Compass vectors. |
-| `.ZF` | `(n, p)` | Standardised feature values. |
-| `.ZS` | `(n, p)` | Standardised attributions. |
-| `.neuron_labels`, `.neuron_theta`, `.neuron_cossin`, `.neuron_sizes` | various | SOM-level results. |
-| `.group_theta` | `(k, p)` | Regime centroid direction angles. |
-| `.dci` | DataFrame | DCI ranking table (`feature`, `DCI`, `rank`, `band`). |
-| `.eta_sq` | float | eta² discrimination of the target by regime. |
+| Attribute                                                                    | Shape       | Description                                                   |
+| ---------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------- |
+| `.labels`                                                                  | `(n,)`    | Regime labels (1-indexed).                                    |
+| `.theta`                                                                   | `(n, p)`  | Direction angles.                                             |
+| `.r`                                                                       | `(n, p)`  | Signal magnitudes.                                            |
+| `.cossin`                                                                  | `(n, 2p)` | Per-sample SHAP-Compass vectors.                              |
+| `.ZF`                                                                      | `(n, p)`  | Standardised feature values.                                  |
+| `.ZS`                                                                      | `(n, p)`  | Standardised attributions.                                    |
+| `.neuron_labels`, `.neuron_theta`, `.neuron_cossin`, `.neuron_sizes` | various     | SOM-level results.                                            |
+| `.group_theta`                                                             | `(k, p)`  | Regime centroid direction angles.                             |
+| `.dci`                                                                     | DataFrame   | DCI ranking table (`feature`, `DCI`, `rank`, `band`). |
+| `.eta_sq`                                                                  | float       | eta² discrimination of the target by regime.                 |
 
 ### Plotting
 
-| Function | Output |
-|---|---|
-| `plot_som_grid` | SOM neuron map + hit map (+ optional target panel). |
-| `plot_dci_ranking` | DCI bar chart with four DCI bands. |
-| `plot_bilayer_heatmap` | Bilayer feature heatmap. |
-| `plot_per_feature_unit_circle` | Per-feature regime centroid panels. |
-| `plot_theta_heatmap` | Regime × feature angle heatmap. |
-| `plot_group_overview` | Regime target-mean bar chart + $Z^{S}$ heatmap. |
-| `plot_spatial` / `plot_group_facets` | Spatial regime maps. |
+| Function                                 | Output                                              |
+| ---------------------------------------- | --------------------------------------------------- |
+| `plot_som_grid`                        | SOM neuron map + hit map (+ optional target panel). |
+| `plot_dci_ranking`                     | DCI bar chart with four DCI bands.                  |
+| `plot_bilayer_heatmap`                 | Bilayer feature heatmap.                            |
+| `plot_per_feature_unit_circle`         | Per-feature regime centroid panels.                 |
+| `plot_theta_heatmap`                   | Regime × feature angle heatmap.                    |
+| `plot_group_overview`                  | Regime target-mean bar chart +$Z^{S}$ heatmap.    |
+| `plot_spatial` / `plot_group_facets` | Spatial regime maps.                                |
 
 ### Fit parameters
 
-| Parameter | Default | Description |
-|---|---|---|
-| `som_grid` | `(9, 9)` | SOM grid size. |
-| `n_regimes` | `6` | Number of attribution regimes (Ward's k). |
-| `use_som` | `True` | If `False`, apply Ward directly to the sample-level SHAP-Compass matrix. |
-| `som_sigma`, `som_lr`, `som_iterations` | `1.5`, `0.5`, `10000` | MiniSom hyperparameters. |
-| `random_state` | `42` | Seed forwarded to MiniSom. |
+| Parameter                                     | Default                     | Description                                                                |
+| --------------------------------------------- | --------------------------- | -------------------------------------------------------------------------- |
+| `som_grid`                                  | `(9, 9)`                  | SOM grid size.                                                             |
+| `n_regimes`                                 | `6`                       | Number of attribution regimes (Ward's k).                                  |
+| `use_som`                                   | `True`                    | If `False`, apply Ward directly to the sample-level SHAP-Compass matrix. |
+| `som_sigma`, `som_lr`, `som_iterations` | `1.5`, `0.5`, `10000` | MiniSom hyperparameters.                                                   |
+| `random_state`                              | `42`                      | Seed forwarded to MiniSom.                                                 |
 
 ## References
 
@@ -399,7 +398,7 @@ Bundled dataset:
 - Ransom, K.M., Nolan, B.T., Stackelberg, P.E., Belitz, K., Fram, M.S.
   (2021). *Machine learning predictions of nitrate in groundwater used
   for drinking supply in the conterminous United States: data release*.
-  U.S. Geological Survey. <https://doi.org/10.5066/P9PQ622D>
+  U.S. Geological Survey. [https://doi.org/10.5066/P9PQ622D](https://doi.org/10.5066/P9PQ622D)
 
 ## Regenerating the README's figures
 
@@ -411,6 +410,10 @@ python docs/build_concept_figures.py
 python examples/02_conus_full_pipeline.py
 cp examples/conus_output/figures/*.png docs/figures/
 ```
+
+## Acknowledgement
+
+This work was supported (in part) by the National Science and Technology Council (NSTC), Taiwan, under grant numbers NSTC 114-2634-F-005-002 (Smart Sustainable New Agriculture Research Center, SMARTer) and NSTC 114-2121-M-005-007-MY2.
 
 ## License
 
