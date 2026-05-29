@@ -24,7 +24,7 @@ across regimes.
 
 ## How directionality is encoded
 
-Each $(Z^{F}_{n,j}, Z^{S}_{n,j})$ pair is a point in the standardised
+Each  $(Z^{F}_{n,j}, Z^{S}_{n,j})$  pair is a point in the standardised
 plane. SHAP-Compass reads it as a *compass bearing* — the angle $\theta$
 tells you **which way the model's attribution moves when the feature
 value moves** — and then drops the magnitude $r$ so that downstream
