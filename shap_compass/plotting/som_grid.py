@@ -1,4 +1,4 @@
-"""SOM neuron grid, hit map, target map, and Ward dendrogram."""
+"""SOM neuron grid, hit map, and target map."""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.patches import Patch
 from matplotlib import cm
-from scipy.cluster.hierarchy import dendrogram, linkage
 
 from ._palette import regime_color
 
@@ -158,51 +157,6 @@ def plot_som_grid(
         cbar = fig.colorbar(sm, ax=ax3, fraction=0.046, pad=0.04, shrink=0.8)
         cbar.set_label(target_label, fontsize=9)
         cbar.ax.tick_params(labelsize=7)
-
-    plt.tight_layout()
-    if save_path:
-        fig.savefig(save_path, dpi=dpi, bbox_inches="tight", facecolor="white")
-    return fig
-
-
-def plot_ward_dendrogram(
-    neuron_cossin: np.ndarray,
-    neuron_labels: np.ndarray,
-    n_groups: int,
-    *,
-    regime_prefix: str = "R",
-    figsize: tuple = (12, 5),
-    dpi: int = 200,
-    save_path=None,
-):
-    """Ward dendrogram on the neuron-level SHAP-Compass matrix."""
-    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
-    Z = linkage(neuron_cossin, method="ward")
-    dendrogram(
-        Z, ax=ax, leaf_rotation=90, leaf_font_size=6,
-        above_threshold_color="#CCCCCC", color_threshold=0,
-    )
-    ax.set_xlabel("Neuron Index", fontsize=10)
-    ax.set_ylabel("Ward Distance", fontsize=10)
-    ax.set_title(
-        f"Ward Hierarchical Clustering\n({len(neuron_labels)} neurons -> {n_groups} regimes)",
-        fontsize=12, fontweight="bold",
-    )
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-
-    if len(Z) >= n_groups:
-        cut_dist = (
-            (Z[-n_groups, 2] + Z[-n_groups + 1, 2]) / 2 if n_groups > 1 else Z[-1, 2]
-        )
-        ax.axhline(y=cut_dist, color="red", linestyle="--", linewidth=1, alpha=0.7,
-                   label=f"k={n_groups} cut")
-
-    legend = [
-        Patch(facecolor=regime_color(g), label=f"{regime_prefix}{g}")
-        for g in range(1, n_groups + 1)
-    ]
-    ax.legend(handles=legend, loc="upper right", fontsize=8, ncol=n_groups)
 
     plt.tight_layout()
     if save_path:

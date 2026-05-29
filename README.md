@@ -115,7 +115,7 @@ compass = SHAPCompass(
     feature_names=feature_names,
     target=y,                  # used to relabel regimes by descending mean
 )
-results = compass.fit(som_grid=(9, 9), n_regimes=6, random_state=42)
+results = compass.fit(som_grid=(20, 20), n_regimes=7, random_state=42)
 results.summary()
 ```
 
@@ -177,7 +177,7 @@ shap_values = shap.TreeExplainer(model).shap_values(X)
 results = SHAPCompass(
     features=X, attributions=shap_values,
     feature_names=feature_names, target=y,
-).fit(som_grid=(9, 9), n_regimes=6, random_state=42)
+).fit(som_grid=(20, 20), n_regimes=7, random_state=42)
 ```
 
 For a runnable version, see `examples/01_quickstart.py`.
@@ -213,6 +213,14 @@ All figures below come from `examples/02_conus_full_pipeline.py` running
 on the bundled CONUS dataset (12,082 wells, 29 features in 8 functional
 dimensions, SOM 20×20, k = 7 regimes labelled `UG1..UG7`). Re-running
 the script reproduces them exactly with `random_state=42`.
+
+> **Adapting to your own target.** The "NO3 (mg/L)" labels below come
+> from this specific example. When you call `plot_som_grid` or
+> `plot_spatial` on your own data, pass `target_label="..."` (and any
+> string you like — e.g. `"Median income (USD)"`, `"PM2.5 (μg/m³)"`)
+> and the figure titles, colourbar, and axis labels update accordingly.
+> Every plotting function is data-agnostic: nothing about NO3,
+> groundwater, or mg/L is hard-coded in the package.
 
 ### Spatial regime distribution
 
@@ -261,13 +269,6 @@ the script reproduces them exactly with `random_state=42`.
 > 20 × 20 SOM: (left) regime label per neuron, (centre) hit map showing
 > samples-per-neuron, (right) per-neuron mean NO3.
 
-### Ward dendrogram
-
-![Ward dendrogram](docs/figures/example_ward_dendrogram.png)
-
-> Ward dendrogram on the neuron-level directional fingerprints —
-> red dashed line marks the $k = 7$ cut.
-
 ## Examples
 
 | Script | What it does |
@@ -293,7 +294,6 @@ The full pipeline example produces:
 | File | Contents |
 |---|---|
 | `figures/som_grid.png` | SOM neuron map: regime labels, hit counts, per-neuron mean target. |
-| `figures/ward_dendrogram.png` | Ward dendrogram on neuron-level fingerprints with the k-cut line. |
 | `figures/dci_ranking.png` | Per-feature DCI bar chart, coloured by DCI band. |
 | `figures/bilayer_feature_heatmap.png` | Regime × feature split-cell heatmap. |
 | `figures/per_feature_unit_circle.png` | One unit-circle panel per feature. |
@@ -367,7 +367,6 @@ pd.DataFrame(
 | Function | Output |
 |---|---|
 | `plot_som_grid` | SOM neuron map + hit map (+ optional target panel). |
-| `plot_ward_dendrogram` | Ward dendrogram on neuron-level fingerprints. |
 | `plot_dci_ranking` | DCI bar chart with four DCI bands. |
 | `plot_bilayer_heatmap` | Bilayer feature heatmap. |
 | `plot_per_feature_unit_circle` | Per-feature regime centroid panels. |

@@ -39,7 +39,6 @@ from shap_compass.plotting import (
     plot_per_feature_unit_circle,
     plot_som_grid,
     plot_spatial,
-    plot_ward_dendrogram,
 )
 
 
@@ -126,13 +125,6 @@ def main() -> None:
         save_path=IMG / "som_grid.png",
     )
     plt.close("all"); print("  som_grid.png")
-
-    plot_ward_dendrogram(
-        results.neuron_cossin, results.neuron_labels, n_groups,
-        regime_prefix="UG",
-        save_path=IMG / "ward_dendrogram.png",
-    )
-    plt.close("all"); print("  ward_dendrogram.png")
 
     plot_dci_ranking(
         results.dci, save_path=IMG / "dci_ranking.png", figsize=(9, 8),

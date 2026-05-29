@@ -341,7 +341,9 @@ def plot_per_feature_unit_circle(
     rows = (n_panels + cols - 1) // cols
 
     if figsize is None:
-        figsize = (3.0 * cols, 3.2 * rows + 1.0)
+        # 3.6 inches per row (was 3.2) gives the 270° tick label enough
+        # room to clear the title of the panel below.
+        figsize = (3.0 * cols, 3.6 * rows + 1.2)
 
     fig, axes = plt.subplots(
         rows, cols, figsize=figsize, dpi=dpi,
@@ -378,7 +380,7 @@ def plot_per_feature_unit_circle(
         ax.tick_params(labelsize=6)
         ax.set_title(
             f"{feat}\nDCI={dci_v:.2f}",
-            fontsize=9, fontweight="bold", pad=8,
+            fontsize=9, fontweight="bold", pad=14,
         )
 
         for spine in ax.spines.values():
@@ -420,6 +422,9 @@ def plot_per_feature_unit_circle(
     )
 
     plt.tight_layout(rect=[0, 0.04, 1, 0.97])
+    # Extra vertical breathing room between rows so the 270° tick label
+    # of one row never collides with the title of the next.
+    plt.subplots_adjust(hspace=0.55)
     if save_path:
         fig.savefig(save_path, dpi=dpi, bbox_inches="tight", facecolor="white")
     return fig
