@@ -22,8 +22,7 @@ def remap_by_target(labels: np.ndarray, target: np.ndarray, descending: bool = T
     """Relabel groups by mean target value.
 
     With ``descending=True`` (the package default) the regime with the
-    highest mean target is labelled 1, the next-highest 2, and so on —
-    matching the TG1 .. TG6 / UG1 .. UG7 convention used in the paper.
+    highest mean target is labelled 1, the next-highest 2, and so on.
     """
     unique = np.unique(labels)
     means = {c: float(target[labels == c].mean()) for c in unique}

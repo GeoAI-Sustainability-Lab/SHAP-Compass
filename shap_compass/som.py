@@ -28,8 +28,10 @@ def train_som(
     data : np.ndarray, shape (n_samples, input_dim)
         Typically the 2J-dim SHAP-Compass matrix.
     grid_size : tuple of int
-        SOM grid (rows, cols). Use ``(9, 9)`` for the Taiwan case study
-        and ``(20, 20)`` for the CONUS case study in the paper.
+        SOM grid (rows, cols). A reasonable default is roughly
+        ``round(sqrt(n_samples) / k)`` per side; common picks are
+        ``(9, 9)`` for low-dimensional cases and ``(20, 20)`` for
+        high-dimensional / large-sample cases.
     sigma, learning_rate, num_iteration : MiniSom training hyperparameters.
     random_seed : int
         Seed forwarded to MiniSom. The package uses ``42`` everywhere by

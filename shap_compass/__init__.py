@@ -26,7 +26,7 @@ from .dci import (
 )
 from .utils import circular_R, circular_R_axial, circular_mean
 # --- Advanced features (kept in source but not part of the public API)
-# These are not yet validated in the accompanying paper. The modules
+# These are not yet validated as a stable public API. The modules
 # remain in the package so they can be re-enabled later, but they are
 # intentionally not re-exported here. To use them anyway, import from
 # the sub-module directly, e.g. `from shap_compass.consensus import ...`.

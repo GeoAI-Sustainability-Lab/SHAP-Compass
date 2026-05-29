@@ -12,7 +12,7 @@ independently per feature.
 The signal magnitude r_{n,j} = sqrt((Z^F_{n,j})^2 + (Z^S_{n,j})^2) is
 intentionally dropped at the unit-circle projection step so that downstream
 clustering is driven by directionality only and is not dominated by a few
-extreme samples (see Section 3.1 ablation in the paper).
+extreme samples.
 """
 
 from __future__ import annotations

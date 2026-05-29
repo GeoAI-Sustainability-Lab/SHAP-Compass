@@ -1,16 +1,18 @@
 # Machine-readable citation file. GitHub renders a "Cite this repository"
 # button automatically when this file is present.
 #
-# All <...> placeholders MUST be replaced before tagging the paper release.
-# See TODO_BEFORE_RELEASE.md for the checklist.
+# Replace the <FIRST_AUTHOR_*> placeholders before tagging a release.
+# The `email`, `orcid`, and `doi` fields are commented out because
+# CFF / GitHub validators reject placeholder text in those typed
+# fields. Uncomment and fill them once real values are available.
 cff-version: 1.2.0
 title: "SHAP-Compass: A Regime-Level Interpretability Framework for Spatially Heterogeneous Attribution Mechanisms in GeoAI"
 message: "If you use this software, please cite both the software and the associated paper (see preferred-citation)."
 type: software
 version: "0.2.0"
-date-released: "2026-05-27"
+date-released: "2026-05-30"
 license: MIT
-repository-code: "https://github.com/GeoAI-Sustainability-Lab/shap-compass"
+repository-code: "https://github.com/GeoAI-Sustainability-Lab/SHAP-Compass"
 keywords:
   - explainable-ai
   - shap
@@ -22,9 +24,9 @@ keywords:
 authors:
   - family-names: "<FIRST_AUTHOR_FAMILY_NAME>"
     given-names: "<FIRST_AUTHOR_GIVEN_NAMES>"
-    email: "<FIRST_AUTHOR_EMAIL>"
-    orcid: "https://orcid.org/<FIRST_AUTHOR_ORCID>"
     affiliation: "<FIRST_AUTHOR_AFFILIATION>"
+    # email: "you@example.com"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
 
 preferred-citation:
   type: article
@@ -39,5 +41,5 @@ preferred-citation:
   authors:
     - family-names: "<FIRST_AUTHOR_FAMILY_NAME>"
       given-names: "<FIRST_AUTHOR_GIVEN_NAMES>"
-      orcid: "https://orcid.org/<FIRST_AUTHOR_ORCID>"
       affiliation: "<FIRST_AUTHOR_AFFILIATION>"
+      # orcid: "https://orcid.org/0000-0000-0000-0000"

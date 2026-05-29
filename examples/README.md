@@ -7,7 +7,7 @@ nitrate dataset** that ships with the package
 | Script | Samples | Features | SOM | k | What it shows |
 |---|---|---|---|---|---|
 | `01_quickstart.py` | 2,000 | 29 | 9 × 9 | 5 | Smallest end-to-end demo. Trains a regressor, computes SHAP, runs SHAP-Compass, prints a one-screen summary. Finishes in under a minute. |
-| `02_conus_full_pipeline.py` | 12,082 | 29 | 12 × 12 | 6 | Full pipeline with all gallery figures and CSV summaries written under `examples/conus_output/`. |
+| `02_conus_full_pipeline.py` | 12,082 | 29 | 20 × 20 | 7 | Full pipeline with all gallery figures and CSV summaries written under `examples/conus_output/`. |
 
 ## Running
 

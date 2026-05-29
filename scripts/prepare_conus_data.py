@@ -1,9 +1,13 @@
 """One-shot script that bundles a clean subset of the Ransom 2021 CONUS
 groundwater nitrate dataset into the package.
 
-Run from the repository root after editing ``SRC`` to point at your
-local copy of ``training_and_holdout_data.txt``. The output CSV is
-small enough (under ~2 MB compressed) to live in the repo.
+Usage
+-----
+    python scripts/prepare_conus_data.py path/to/training_and_holdout_data.txt
+
+Or set the environment variable ``CONUS_SOURCE_TXT`` to that path and
+run the script without arguments. The output CSV is small enough
+(under ~2 MB compressed) to live in the repo.
 
 The selection keeps the 25 most-cited features in the original Ransom
 study (covering nitrogen inputs, land use, soil, drainage, hydrology,
@@ -18,25 +22,33 @@ drinking supply in the conterminous United States: data release.
 U.S. Geological Survey, https://doi.org/10.5066/P9PQ622D
 
 The dataset is in the public domain (U.S. Geological Survey
-information policy).
+information policy). Download ``training_and_holdout_data.txt`` from
+the ScienceBase release linked above and pass its path to this script.
 """
 
 from __future__ import annotations
 
+import os
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-# -----------------------------------------------------------------
-# Configure source path. Edit if running on a different machine.
-# -----------------------------------------------------------------
-SRC = Path(
-    r"E:\Case\大Q_圖資處理\05_PREDICTION\20260131_222156_K05d_"
-    r"環保署_有剔除極端值\41_公開資料集驗證\Ransom2021\National_NO3"
-    r"\Inputs\training_and_holdout_data.txt"
-)
 DST = Path(__file__).resolve().parents[1] / "shap_compass" / "data" / "conus_nitrate.csv.gz"
+
+
+def _resolve_source() -> Path:
+    if len(sys.argv) >= 2:
+        return Path(sys.argv[1]).expanduser().resolve()
+    env = os.environ.get("CONUS_SOURCE_TXT")
+    if env:
+        return Path(env).expanduser().resolve()
+    raise SystemExit(
+        "No source file given. Pass the path to "
+        "training_and_holdout_data.txt as the first argument, or set "
+        "the CONUS_SOURCE_TXT environment variable."
+    )
 
 
 # Curated 25-feature subset (top SHAP importance from the Ransom analysis),
@@ -76,8 +88,9 @@ FEATURE_RENAME = {
 
 
 def main() -> None:
-    print(f"reading {SRC}")
-    df = pd.read_csv(SRC, sep="\t", low_memory=False)
+    src = _resolve_source()
+    print(f"reading {src}")
+    df = pd.read_csv(src, sep="\t", low_memory=False)
     print(f"  raw shape: {df.shape}")
 
     src_cols = [c for c in FEATURE_RENAME if c in df.columns]

@@ -1,6 +1,6 @@
 """Quality metrics M01-M21 for SHAP-Compass.
 
-These 21 indicators mirror Appendix S2 of the ISPRS paper. They serve as a
+These 21 indicators provide a quality dashboard. They serve as a
 self-check on a SHAP-Compass configuration (SOM size, k, linkage, ...).
 Two hard pre-filters apply before any cross-configuration ranking:
 
@@ -66,7 +66,7 @@ METRIC_NAMES = {
 }
 
 CORE_METRICS = ("M13", "M18", "M20")
-"""Three primary selectors applied within the valid pool (Section 2.4)."""
+"""Three primary selectors applied within the valid pool."""
 
 
 # ---------------------------------------------------------------------------

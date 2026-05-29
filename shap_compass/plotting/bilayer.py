@@ -1,11 +1,9 @@
 """Bilayer feature heatmap and per-feature unit-circle plot.
 
-These two functions reproduce the headline regime-level figures of the
-SHAP-Compass paper (Fig.7 / Fig.11 and Fig.9 / Fig.13). They replace the
-rose / polar diagrams used in earlier internal versions because the
-bilayer split-cell layout makes the Z^F (feature value) vs Z^S
-(attribution) coupling per regime visible at a glance and scales to
-dozens of features.
+These two functions are the headline regime-level visualisations of
+SHAP-Compass. The bilayer split-cell layout makes the Z^F (feature
+value) vs Z^S (attribution) coupling per regime visible at a glance
+and scales cleanly to dozens of features.
 """
 
 from __future__ import annotations
@@ -24,7 +22,7 @@ from ..dci import DCI_BAND_COLORS, dci_band
 
 
 # ---------------------------------------------------------------------------
-# Bilayer feature heatmap  (Fig.7 / Fig.11)
+# Bilayer feature heatmap
 # ---------------------------------------------------------------------------
 
 def plot_bilayer_heatmap(
@@ -69,12 +67,11 @@ def plot_bilayer_heatmap(
         order of the mapping. Features not listed in any dimension are
         appended at the end. Vertical separator lines mark dimension
         boundaries and dimension names are written above the heatmap.
-        Matches the layout of Fig.7 / Fig.11 in the paper.
     feature_codes : mapping {feature name -> short code}, optional
-        Short code (e.g. ``"TF1"``) prefixed to the column tick label.
+        Short code prefixed to the column tick label (e.g. ``"F1"``).
     regime_prefix : str
         Prefix for the y-tick labels (default ``"R"`` produces R1, R2, ...).
-        Use ``"TG"`` for Taiwan regimes and ``"UG"`` for CONUS regimes.
+        Pass any string you like (e.g. ``"UG"``, ``"Cluster_"``).
     annotate_threshold : float
         Annotate the cell only when ``|Z^F| >= annotate_threshold``.
     annotate_fontsize : float
@@ -276,7 +273,7 @@ def plot_bilayer_heatmap(
 
 
 # ---------------------------------------------------------------------------
-# Per-feature unit-circle plot  (Fig.9 / Fig.13)
+# Per-feature unit-circle plot
 # ---------------------------------------------------------------------------
 
 def plot_per_feature_unit_circle(
@@ -315,11 +312,12 @@ def plot_per_feature_unit_circle(
     n_groups : int
         Number of regimes (rows of ``group_theta``).
     top_features : int, optional
-        Show only the top-N features by mean abs DCI rank. When ``None``
-        (default) all features are shown -- recommended for J <= 30.
-        For Fig.13 in the paper the value used was 20.
+        Show only the top-N features by descending DCI. When ``None``
+        (default) every feature is shown — recommended for ``J <= 30``;
+        pass e.g. ``top_features=20`` to truncate when ``J`` is large.
     sort_by : ``"dci"`` or ``"feature"``
-        Column ordering. ``"dci"`` (default) reproduces Fig.9 / Fig.13.
+        Column ordering. ``"dci"`` (default) puts the most universal
+        drivers first.
     """
     from ._palette import regime_color
 

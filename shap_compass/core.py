@@ -1,6 +1,6 @@
 """SHAPCompass: main entry point for the SHAP-Compass analysis framework.
 
-Pipeline (matches Section 2 of the ISPRS paper):
+Pipeline:
 
     1. Joint Z-standardisation of features (Z^F) and SHAP attributions (Z^S)
        column by column.
@@ -72,7 +72,7 @@ class SHAPCompassResults:
     # ----------------------------------------------------------------
     @property
     def regime_labels(self) -> np.ndarray:
-        """Alias for ``labels`` using the paper's regime terminology."""
+        """Alias for ``labels`` using the regime-level terminology."""
         return self.labels
 
     @property
@@ -133,7 +133,7 @@ class SHAPCompass:
         Feature labels used in plots and the DCI table.
     target : np.ndarray, shape (n_samples,), optional
         Target variable used to relabel regimes in descending mean order
-        (matches the TG1 .. TGK convention of the paper).
+        so that regime 1 has the highest mean target.
 
     Examples
     --------
@@ -148,8 +148,8 @@ class SHAPCompass:
     # Constructors
     # ----------------------------------------------------------------
     # --- Advanced feature (disabled): auto-compute SHAP values from a
-    #     trained model. Kept in source for reference; not yet validated
-    #     in the accompanying paper, so it is not part of the public API.
+    #     trained model. Kept in source for reference but not part of
+    #     the public API yet.
     # @classmethod
     # def from_model(
     #     cls,
@@ -266,15 +266,17 @@ class SHAPCompass:
         Parameters
         ----------
         som_grid : (rows, cols)
-            SOM grid size. The paper uses ``(9, 9)`` for Taiwan (J=17)
-            and ``(20, 20)`` for CONUS (J=76).
+            SOM grid size. A reasonable default is roughly
+            ``(round(sqrt(n_samples) / k), ...)``; common picks are
+            ``(9, 9)`` for low-dimensional cases and ``(20, 20)`` for
+            high-dimensional / large-sample cases.
         n_regimes : int
             Number of attribution regimes (Ward's k). Default ``6``.
             ``n_clusters`` is accepted as an alias.
         use_som : bool
             If ``False``, Ward is applied directly to the sample-level
             SHAP-Compass matrix without the SOM step (only recommended
-            for small datasets — see Section 2.3 of the paper).
+            for small datasets, roughly ``n_samples < 1000``).
         som_sigma, som_lr, som_iterations : MiniSom hyperparameters.
         random_state : int
             Seed propagated to MiniSom for reproducibility.

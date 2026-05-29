@@ -12,7 +12,7 @@ with DCI_j in [0, 1]. Values near 1 indicate a universal driver (all
 regimes agree on the attribution direction), while values near 0 indicate
 a context-dependent driver (regime-specific mechanisms).
 
-The four interpretation bands used in the paper are:
+The four interpretation bands are:
 
     >= 0.75 : high consistency       (green)
     0.50 - 0.75 : medium               (yellow)

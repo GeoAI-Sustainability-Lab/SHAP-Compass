@@ -9,13 +9,15 @@ description = "SHAP-Compass: a regime-level interpretability framework for spati
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
-# NOTE: replace the <...> placeholders before tagging the paper release.
-# See TODO_BEFORE_RELEASE.md for the full checklist.
+# Replace the <FIRST_AUTHOR_NAME> placeholder before tagging a release.
+# Email is omitted because PEP 621 / setuptools validates it as
+# RFC-5322 / idn-email, and any angle-bracket placeholder would fail
+# install.
 authors = [
-    {name = "<FIRST_AUTHOR_NAME>", email = "<FIRST_AUTHOR_EMAIL>"},
+    {name = "<FIRST_AUTHOR_NAME>"},
 ]
 maintainers = [
-    {name = "<FIRST_AUTHOR_NAME>", email = "<FIRST_AUTHOR_EMAIL>"},
+    {name = "<FIRST_AUTHOR_NAME>"},
 ]
 keywords = [
     "explainable-ai", "shap", "clustering", "self-organizing-map",
@@ -49,11 +51,10 @@ dev = ["pytest>=7.0", "pytest-cov", "ruff"]
 docs = ["sphinx", "sphinx-rtd-theme"]
 
 [project.urls]
-# Replace GeoAI-Sustainability-Lab with the GitHub user or organisation before release.
-Homepage = "https://github.com/GeoAI-Sustainability-Lab/shap-compass"
-Documentation = "https://github.com/GeoAI-Sustainability-Lab/shap-compass#readme"
-Repository = "https://github.com/GeoAI-Sustainability-Lab/shap-compass"
-Issues = "https://github.com/GeoAI-Sustainability-Lab/shap-compass/issues"
+Homepage = "https://github.com/GeoAI-Sustainability-Lab/SHAP-Compass"
+Documentation = "https://github.com/GeoAI-Sustainability-Lab/SHAP-Compass#readme"
+Repository = "https://github.com/GeoAI-Sustainability-Lab/SHAP-Compass"
+Issues = "https://github.com/GeoAI-Sustainability-Lab/SHAP-Compass/issues"
 
 [tool.setuptools.packages.find]
 include = ["shap_compass*"]
