@@ -255,14 +255,17 @@ def plot_bilayer_heatmap(
     cbar = plt.colorbar(
         sm, ax=ax, fraction=0.015, pad=0.005, shrink=0.7, location="right",
     )
-    cbar.set_label("Z-score (red = positive, blue = negative)", fontsize=11)
+    cbar.set_label(
+        r"$Z^{F}$ / $Z^{S}$ (red = positive, blue = negative)",
+        fontsize=11,
+    )
     cbar.ax.tick_params(labelsize=9)
 
     fig.text(
         0.5, 0.01,
-        "Upper half-cells: Z^F (standardised feature value)   |   "
-        "Lower half-cells: Z^S (standardised SHAP attribution)   |   "
-        f"Cells with |Z^F| >= {annotate_threshold:g} are annotated",
+        r"Upper half-cells: $Z^{F}$ (standardised feature value)   |   "
+        r"Lower half-cells: $Z^{S}$ (standardised SHAP attribution)   |   "
+        rf"Cells with $|Z^{{F}}|$ $\geq$ {annotate_threshold:g} are annotated",
         ha="center", fontsize=10, style="italic",
     )
 

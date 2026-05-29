@@ -13,29 +13,31 @@ across regimes.
 ![SHAP-Compass pipeline](docs/concepts/concept_pipeline.png)
 
 > **Stage 1** ingests features and attributions; **Stage 2** jointly
-> standardises them and projects each `(Z^F, Z^S)` pair onto the unit
-> circle to form the `N × 2J` SHAP-Compass matrix; **Stage 3** trains a
-> SOM on that matrix and Ward-clusters the neuron-level directional
-> fingerprints into K regimes; **Stage 4** reports the DCI ranking, the
-> bilayer feature heatmap, and the M01–M21 quality metrics.
+> standardises them and projects each $(Z^{F}, Z^{S})$ pair onto the
+> unit circle to form the $N \times 2J$ SHAP-Compass matrix;
+> **Stage 3** trains a SOM on that matrix and Ward-clusters the
+> neuron-level directional fingerprints into $K$ regimes; **Stage 4**
+> reports the DCI ranking, the bilayer feature heatmap, and the M01–M21
+> quality metrics.
 
 ---
 
 ## How directionality is encoded
 
-Each `(Z^F_{n,j}, Z^S_{n,j})` pair is a point in the standardised plane.
-SHAP-Compass reads it as a *compass bearing* — the angle θ tells you
-**which way the model's attribution moves when the feature value moves**
-— and then drops the magnitude `r` so that downstream clustering is
-driven by mechanism direction, not by a handful of extreme samples.
+Each $(Z^{F}_{n,j}, Z^{S}_{n,j})$ pair is a point in the standardised
+plane. SHAP-Compass reads it as a *compass bearing* — the angle $\theta$
+tells you **which way the model's attribution moves when the feature
+value moves** — and then drops the magnitude $r$ so that downstream
+clustering is driven by mechanism direction, not by a handful of extreme
+samples.
 
 ![Unit-circle projection](docs/concepts/concept_unit_circle.png)
 
-> (a) Three illustrative samples on the `Z^F vs Z^S` plane.
-> (b) Their direction angles θ and magnitudes r.
-> (c) Unit-circle projection: only θ is retained, so two samples with
-> the same mechanism but very different intensities end up at the same
-> point on the circle.
+> (a) Three illustrative samples on the $(Z^{F}, Z^{S})$ plane.
+> (b) Their direction angles $\theta$ and magnitudes $r$.
+> (c) Unit-circle projection: only $\theta$ is retained, so two samples
+> with the same mechanism but very different intensities end up at the
+> same point on the circle.
 
 ## Key terminology
 
@@ -47,7 +49,7 @@ driven by mechanism direction, not by a handful of extreme samples.
 | directional fingerprint | `2J`-dim vector per SOM neuron |
 | Directional Consistency Index (DCI) | per-feature cross-regime concentration in `[0, 1]` |
 | axial doubling | `2θ` transform, so θ and `θ + π` are the same axis |
-| bilayer feature heatmap | split-cell `(Z^F, Z^S)` view per regime × feature |
+| bilayer feature heatmap | split-cell $(Z^{F}, Z^{S})$ view per regime × feature |
 
 ## Key features
 
@@ -71,8 +73,9 @@ driven by mechanism direction, not by a handful of extreme samples.
   separability, M20 target gap). Each metric is reported independently;
   no aggregate score is produced.
 - **Bilayer feature heatmap** — regimes × features split-cell layout
-  (upper half = Z^F, lower half = Z^S, annotated when `|Z^F| >= 0.5`),
-  with optional functional-dimension column grouping.
+  (upper half = $Z^{F}$, lower half = $Z^{S}$, annotated when
+  $|Z^{F}| \geq 0.5$), with optional functional-dimension column
+  grouping.
 - **Per-feature unit-circle plot** — one subplot per feature, sorted by
   descending DCI, border colour-coded by DCI band.
 - Works with **any attribution method** (SHAP, LIME, Integrated
@@ -123,20 +126,24 @@ Sample output:
 ============================================================
   Samples:    12082
   Features:   29
-  Regimes:    6
-  eta^2 (target): 0.2304
+  Regimes:    7
+  eta^2 (target): 0.0655
 
   Regime sizes:
-    R1:  1460 (12.1%)
-    R2:  1827 (15.1%)
-    ...
+    UG1:  1587 (13.1%)
+    UG2:  1905 (15.8%)
+    UG3:  2014 (16.7%)
+    UG4:  2985 (24.7%)
+    UG5:  1480 (12.2%)
+    UG6:   625 ( 5.2%)
+    UG7:  1486 (12.3%)
 
   DCI ranking (top 5):
-    1. NH4_Deposition_1992  DCI=0.998 (high)
-    2. NO3_Deposition_1985  DCI=0.972 (high)
-    3. Precip               DCI=0.946 (high)
-    4. NO3_Deposition_1992  DCI=0.938 (high)
-    5. Baseflow_Index       DCI=0.916 (high)
+    1. NH4_Deposition_1992  DCI=0.985 (high)
+    2. PET                  DCI=0.965 (high)
+    3. NaturalCover_1982    DCI=0.955 (high)
+    4. NaturalCover_1974    DCI=0.953 (high)
+    5. Poor_Drainage_Pct    DCI=0.932 (high)
 ============================================================
 ```
 
@@ -203,37 +210,38 @@ linked under [References](#references) below.
 
 All figures below come from `examples/02_conus_full_pipeline.py` running
 on the bundled CONUS dataset (12,082 wells, 29 features in 8 functional
-dimensions, SOM 12×12, k = 6 regimes). Re-running the script reproduces
-them exactly with `random_state=42`.
+dimensions, SOM 20×20, k = 7 regimes labelled `UG1..UG7`). Re-running
+the script reproduces them exactly with `random_state=42`.
 
 ### Spatial regime distribution
 
 ![Spatial distribution](docs/figures/example_spatial_distribution.png)
 
-> Left: recovered regimes (`R1..R6`) on the CONUS well map. Right: NO3
-> concentrations on the same coordinates. The clusters form spatially
-> coherent zones even though SHAP-Compass uses **no spatial coordinates
-> at all** — the geographic structure emerges purely from the
-> directional attribution mechanisms encoded by `(Z^F, Z^S)`.
+> Left: recovered regimes (`UG1..UG7`) on the CONUS well map. Right:
+> NO3 concentrations on the same coordinates. The clusters form
+> spatially coherent zones even though SHAP-Compass uses **no spatial
+> coordinates at all** — the geographic structure emerges purely from
+> the directional attribution mechanisms encoded by $(Z^{F}, Z^{S})$.
 
 ### Bilayer feature heatmap
 
 ![Bilayer feature heatmap](docs/figures/example_bilayer_heatmap.png)
 
-> Rows = regimes (descending mean NO3). Columns = the 29 features
-> grouped by functional dimension with black separator lines. Each cell
-> is split horizontally: **upper half = Z^F** (standardised feature
-> value), **lower half = Z^S** (standardised SHAP attribution). Cells
-> with `|Z^F| >= 0.5` are annotated. Mismatched colours between a cell's
-> two halves flag **sign-flip mechanisms** — the same feature value
-> pushes the model up in one regime and down in another.
+> Rows = regimes `UG1..UG7` (descending mean NO3). Columns = the 29
+> features grouped by functional dimension with black separator lines.
+> Each cell is split horizontally: **upper half = $Z^{F}$**
+> (standardised feature value), **lower half = $Z^{S}$** (standardised
+> SHAP attribution). Cells with $|Z^{F}| \geq 0.5$ are annotated.
+> Mismatched colours between a cell's two halves flag **sign-flip
+> mechanisms** — the same feature value pushes the model up in one
+> regime and down in another.
 
 ### Per-feature unit-circle plot
 
 ![Per-feature unit circle](docs/figures/example_per_feature_unit_circle.png)
 
 > One panel per feature, sorted by descending DCI. Each spoke is one
-> regime centroid on the `(Z^F, Z^S)` unit circle. **Subplot border
+> regime centroid on the $(Z^{F}, Z^{S})$ unit circle. **Subplot border
 > colour** encodes the DCI band: green ≥ 0.75 (universal),
 > yellow 0.50–0.75, orange 0.25–0.50, red < 0.25 (context-dependent).
 
@@ -249,7 +257,7 @@ them exactly with `random_state=42`.
 
 ![SOM grid](docs/figures/example_som_grid.png)
 
-> 12 × 12 SOM: (left) regime label per neuron, (centre) hit map showing
+> 20 × 20 SOM: (left) regime label per neuron, (centre) hit map showing
 > samples-per-neuron, (right) per-neuron mean NO3.
 
 ### Ward dendrogram
@@ -257,7 +265,7 @@ them exactly with `random_state=42`.
 ![Ward dendrogram](docs/figures/example_ward_dendrogram.png)
 
 > Ward dendrogram on the neuron-level directional fingerprints —
-> red dashed line marks the k = 6 cut.
+> red dashed line marks the $k = 7$ cut.
 
 ## Examples
 
@@ -363,7 +371,7 @@ pd.DataFrame(
 | `plot_bilayer_heatmap` | Bilayer feature heatmap. |
 | `plot_per_feature_unit_circle` | Per-feature regime centroid panels. |
 | `plot_theta_heatmap` | Regime × feature angle heatmap. |
-| `plot_group_overview` | Regime target-mean bar chart + Z^S heatmap. |
+| `plot_group_overview` | Regime target-mean bar chart + $Z^{S}$ heatmap. |
 | `plot_spatial` / `plot_group_facets` | Spatial regime maps. |
 
 ### Fit parameters
@@ -406,4 +414,5 @@ cp examples/conus_output/figures/*.png docs/figures/
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Released under the MIT License — © 2026 GeoAI-Sustainability-Lab.
+See [LICENSE](LICENSE) for the full text.

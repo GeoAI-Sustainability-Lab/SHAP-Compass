@@ -86,15 +86,15 @@ def main() -> None:
     # ---------------------------------------------------------------
     # 3) Run SHAP-Compass.
     # ---------------------------------------------------------------
-    print("[3] Running SHAP-Compass (SOM 12x12, k=6) ...")
+    print("[3] Running SHAP-Compass (SOM 20x20, k=7) ...")
     compass = SHAPCompass(
         features=X,
         attributions=shap_values,
         feature_names=CONUS_FEATURE_NAMES,
         target=y,
     )
-    results = compass.fit(som_grid=(12, 12), n_regimes=6, random_state=42)
-    results.summary()
+    results = compass.fit(som_grid=(20, 20), n_regimes=7, random_state=42)
+    results.summary(regime_prefix="UG")
 
     # ---------------------------------------------------------------
     # 4) Gallery figures.
@@ -121,13 +121,15 @@ def main() -> None:
         results.som_grid, n_groups,
         neuron_target_means=neuron_t,
         target_label="NO3 mean (mg/L)",
-        figsize=(20, 6),
+        regime_prefix="UG",
+        figsize=(26, 8),
         save_path=IMG / "som_grid.png",
     )
     plt.close("all"); print("  som_grid.png")
 
     plot_ward_dendrogram(
         results.neuron_cossin, results.neuron_labels, n_groups,
+        regime_prefix="UG",
         save_path=IMG / "ward_dendrogram.png",
     )
     plt.close("all"); print("  ward_dendrogram.png")
@@ -140,12 +142,14 @@ def main() -> None:
     plot_bilayer_heatmap(
         ZF_g, ZS_g, CONUS_FEATURE_NAMES, n_groups,
         feature_dimensions=CONUS_FEATURE_DIMENSIONS,
+        regime_prefix="UG",
         save_path=IMG / "bilayer_feature_heatmap.png",
     )
     plt.close("all"); print("  bilayer_feature_heatmap.png")
 
     plot_per_feature_unit_circle(
         results.group_theta, results.dci, CONUS_FEATURE_NAMES, n_groups,
+        regime_prefix="UG",
         save_path=IMG / "per_feature_unit_circle.png",
     )
     plt.close("all"); print("  per_feature_unit_circle.png")
@@ -153,6 +157,7 @@ def main() -> None:
     plot_spatial(
         results.labels, lon, lat, n_groups, target=y,
         convert_to_wgs84=False,
+        regime_prefix="UG",
         target_label="NO3 (mg/L)",
         save_path=IMG / "spatial_distribution.png",
     )

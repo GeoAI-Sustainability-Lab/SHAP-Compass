@@ -79,8 +79,16 @@ class SHAPCompassResults:
     def n_regimes(self) -> int:
         return int(self.n_groups)
 
-    def summary(self) -> None:
-        """Print a concise text summary."""
+    def summary(self, regime_prefix: str = "R") -> None:
+        """Print a concise text summary.
+
+        Parameters
+        ----------
+        regime_prefix : str, default "R"
+            Prefix used for regime labels in the printout, e.g. ``"R"``
+            (default), ``"UG"``, ``"TG"``, etc. Purely cosmetic — the
+            stored labels in :attr:`labels` remain 1..K integers.
+        """
         n_samples = len(self.labels) if self.labels is not None else 0
         n_features = len(self.feature_names)
 
@@ -98,7 +106,7 @@ class SHAPCompassResults:
             for g in range(1, self.n_groups + 1):
                 n = int((self.labels == g).sum())
                 pct = n / n_samples * 100 if n_samples else 0.0
-                print(f"    R{g}: {n:>5} ({pct:.1f}%)")
+                print(f"    {regime_prefix}{g}: {n:>5} ({pct:.1f}%)")
 
         if self.dci is not None:
             print()
