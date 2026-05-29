@@ -370,7 +370,7 @@ pd.DataFrame(
 | `plot_bilayer_heatmap`                 | Bilayer feature heatmap.                            |
 | `plot_per_feature_unit_circle`         | Per-feature regime centroid panels.                 |
 | `plot_theta_heatmap`                   | Regime × feature angle heatmap.                    |
-| `plot_group_overview`                  | Regime target-mean bar chart +$Z^{S}$ heatmap.    |
+| `plot_group_overview`                  | Regime target-mean bar chart +$`Z^{S}`$ heatmap.    |
 | `plot_spatial` / `plot_group_facets` | Spatial regime maps.                                |
 
 ### Fit parameters
