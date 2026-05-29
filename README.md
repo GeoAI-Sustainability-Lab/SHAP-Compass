@@ -14,7 +14,7 @@ across regimes.
 
 > **Stage 1** ingests features and attributions; **Stage 2** jointly
 > standardises them and projects each $(Z^{F}, Z^{S})$ pair onto the
-> unit circle to form the $N \times 2J$ SHAP-Compass matrix;
+> unit circle to form the $`N \times 2J`$ SHAP-Compass matrix;
 > **Stage 3** trains a SOM on that matrix and Ward-clusters the
 > neuron-level directional fingerprints into $K$ regimes; **Stage 4**
 > reports the DCI ranking, the bilayer feature heatmap, and the M01–M21
@@ -24,7 +24,7 @@ across regimes.
 
 ## How directionality is encoded
 
-Each  $(Z^{F}_{n,j}, Z^{S}_{n,j})$  pair is a point in the standardised
+Each $`(Z^{F}_{n,j}, Z^{S}_{n,j})`$ pair is a point in the standardised
 plane. SHAP-Compass reads it as a *compass bearing* — the angle $\theta$
 tells you **which way the model's attribution moves when the feature
 value moves** — and then drops the magnitude $r$ so that downstream
@@ -49,7 +49,7 @@ samples.
 | directional fingerprint             | `2J`-dim vector per SOM neuron                           |
 | Directional Consistency Index (DCI) | per-feature cross-regime concentration in `[0, 1]`       |
 | axial doubling                      | `2θ` transform, so θ and `θ + π` are the same axis |
-| bilayer feature heatmap             | split-cell$(Z^{F}, Z^{S})$ view per regime × feature    |
+| bilayer feature heatmap             | split-cell$`(Z^{F}, Z^{S})`$ view per regime × feature    |
 
 ## Key features
 
@@ -370,7 +370,7 @@ pd.DataFrame(
 | `plot_bilayer_heatmap`                 | Bilayer feature heatmap.                            |
 | `plot_per_feature_unit_circle`         | Per-feature regime centroid panels.                 |
 | `plot_theta_heatmap`                   | Regime × feature angle heatmap.                    |
-| `plot_group_overview`                  | Regime target-mean bar chart +$Z^{S}$ heatmap.    |
+| `plot_group_overview`                  | Regime target-mean bar chart +$`Z^{S}`$ heatmap.    |
 | `plot_spatial` / `plot_group_facets` | Spatial regime maps.                                |
 
 ### Fit parameters
