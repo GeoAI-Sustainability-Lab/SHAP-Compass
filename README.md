@@ -1,7 +1,8 @@
 # SHAP-Compass
+### Acknowledgement
+This work was supported (in part) by the National Science and Technology Council (NSTC), Taiwan, under grant numbers NSTC 114-2634-F-005-002 (Smart Sustainable New Agriculture Research Center, SMARTer) and NSTC 114-2121-M-005-007-MY2.
 
-**Directional SHAP Attribution Clustering for GeoAI.**
-
+## SHAP-Compass Introduction
 SHAP-Compass projects every `(feature value, SHAP attribution)` pair onto
 the unit circle, then groups samples whose attribution directionalities
 are similar using a SOM + Ward two-stage clustering. The resulting
