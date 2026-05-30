@@ -260,14 +260,26 @@ def make_dci_figure() -> None:
             color = REGIME_COLORS[k % len(REGIME_COLORS)]
             ax.plot([t, t], [0, 1], color=color, lw=2.4)
             ax.plot(t, 1, "o", color=color, markersize=8)
-        # Resultant after axial doubling
+        # Axial mean resultant after 2θ doubling. Drawn as a single
+        # bidirectional arrow spanning both halves of the axis
+        # (θ and θ+π are the same axial direction).
         C = float(np.mean(np.cos(2 * thetas)))
         S = float(np.mean(np.sin(2 * thetas)))
         R = float(np.sqrt(C ** 2 + S ** 2))
         result_theta = 0.5 * np.arctan2(S, C)
-        ax.plot([result_theta, result_theta], [0, R], color="#212121",
-                lw=3.0, linestyle="-", zorder=5)
-        ax.plot(result_theta, R, "s", color="#212121", markersize=10, zorder=6)
+        ax.annotate(
+            "",
+            xy=(result_theta, R),
+            xytext=(result_theta + np.pi, R),
+            arrowprops=dict(
+                arrowstyle="<|-|>",
+                color="#212121",
+                lw=2.6,
+                shrinkA=0, shrinkB=0,
+                mutation_scale=18,
+            ),
+            zorder=5,
+        )
         ax.set_ylim(0, 1.15)
         ax.set_rticks([0.25, 0.5, 0.75, 1.0])
         ax.tick_params(labelsize=7)
@@ -292,8 +304,9 @@ def make_dci_figure() -> None:
                         band_color="#2E7D32")
 
     fig.text(0.5, -0.02,
-             "Coloured spokes: per-regime direction centroids on the unit circle."
-             "  Black square: axial mean resultant (length = DCI).",
+             "Coloured spokes: per-regime direction centroids on the unit circle.  "
+             "Black bidirectional arrow: axial mean resultant after the 2θ "
+             "doubling transform — its half-length equals DCI.",
              ha="center", fontsize=10, style="italic")
     fig.suptitle("Directional Consistency Index (DCI)",
                  fontsize=14, fontweight="bold", y=1.04)

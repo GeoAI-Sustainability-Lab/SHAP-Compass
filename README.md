@@ -63,10 +63,11 @@ samples.
 ![DCI geometric meaning](docs/concepts/concept_dci.png)
 
 > Each coloured spoke is one regime's centroid direction for a single
-> feature. The black square is the **axial mean resultant** after the
-> `2θ` doubling transform; its length is DCI. Low DCI (panel a) —
-> regimes disagree on direction, so the resultant collapses to near 0;
-> high DCI (panel b) — regimes agree, so the resultant approaches 1.
+> feature. The black **bidirectional arrow** is the axial mean
+> resultant after the `2θ` doubling transform — the half-length of the
+> arrow equals DCI. Low DCI (panel a) — regimes disagree on direction,
+> so the arrow collapses toward 0; high DCI (panel b) — regimes agree,
+> so the arrow approaches the unit circle.
 
 - **21 quality metrics (M01–M21)** with two hard pre-filters and a
   three-core hierarchical selector (M13 stability, M18 low-target band
